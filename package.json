@@ -2,5 +2,15 @@
   "devDependencies": {
     "prettier": "2.0.5",
     "typescript": "^3.9.7"
-  }
+  },
+  "name": "bear-tracks",
+  "description": "Scripts to automate some actions in Bear.app",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zahan <z@zahanm.com>",
+  "license": "MIT"
 }
