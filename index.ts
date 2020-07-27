@@ -3,6 +3,7 @@ import * as path from "path";
 
 import * as sqlite3 from "sqlite3";
 import { open } from "sqlite";
+import * as yargs from "yargs";
 
 import { BEAR_DB } from "./lib/constants";
 import findDuplicates from "./lib/findDuplicates";
@@ -16,9 +17,14 @@ import findDuplicates from "./lib/findDuplicates";
     mode: sqlite3.OPEN_READONLY,
   });
   try {
-    const titles = await findDuplicates(db);
-    console.log("Notes with duplicated titles:");
-    console.log(titles);
+    yargs
+      .scriptName("bear-tracks")
+      .usage("$0 <cmd> [args]")
+      .command("duplicates", "Find duplicate note titles", async function (_) {
+        const titles = await findDuplicates(db);
+        console.log("Notes with duplicated titles:");
+        console.log(titles);
+      }).argv;
   } finally {
     await db.close();
   }
