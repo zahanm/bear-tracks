@@ -7,6 +7,10 @@ export const BEAR_DB = {
       trashed: "ZTRASHED",
       archived: "ZARCHIVED",
       title: "ZTITLE",
+      creation_date: "ZCREATIONDATE",
+      modification_date: "ZMODIFICATIONDATE",
+      text: "ZTEXT",
+      uuid: "ZUNIQUEIDENTIFIER",
     },
   },
 };
