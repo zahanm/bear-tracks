@@ -8,7 +8,7 @@ import * as yargs from "yargs";
 import { BEAR_DB } from "./lib/constants";
 import findDuplicates from "./lib/findDuplicates";
 
-(async () => {
+async function main() {
   sqlite3.verbose();
   const bear_db_path = path.join(os.homedir(), BEAR_DB.path);
   const db = await open({
@@ -20,7 +20,9 @@ import findDuplicates from "./lib/findDuplicates";
     yargs
       .scriptName("bear-tracks")
       .usage("$0 <cmd> [args]")
-      .command("duplicates", "Find duplicate note titles", async function (_) {
+      .command("duplicates", "Find duplicate note titles", async function (
+        _argv: yargs.Arguments
+      ) {
         const titles = await findDuplicates(db);
         console.log("Notes with duplicated titles:");
         console.log(titles);
@@ -28,4 +30,8 @@ import findDuplicates from "./lib/findDuplicates";
   } finally {
     await db.close();
   }
-})();
+}
+
+main().catch((err) => {
+  console.error(err);
+});
