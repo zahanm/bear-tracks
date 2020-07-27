@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "ES2016",
+    "target": "ES6",
+    "lib": ["ES6"],
     "jsx": "preserve",
+    "noImplicitAny": true,
     "outDir": "out",
     "sourceMap": true
   },
