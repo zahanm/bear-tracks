@@ -1,7 +1,6 @@
 {
   "devDependencies": {
     "@types/node": "^14.0.26",
-    "@types/yargs": "^15.0.5",
     "prettier": "2.0.5",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
@@ -11,9 +10,9 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
+    "commander": "^6.0.0",
     "sqlite": "^4.0.12",
-    "sqlite3": "^5.0.0",
-    "yargs": "^15.4.1"
+    "sqlite3": "^5.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
