@@ -48,7 +48,7 @@ async function main() {
       });
 
     /**
-     * @returns the created note UUID
+     * @returns the created note title
      */
     program
       .command("create <note-type>")
@@ -58,8 +58,7 @@ async function main() {
           throw new Error(`Invalid note-type: ${ntype}`);
         }
         const note = await createNote(ntype);
-        console.error(`Made "${note.title}"`);
-        console.log(note.uuid);
+        console.log(note.title);
       });
 
     await program.parseAsync();
