@@ -11,6 +11,10 @@ import findDuplicates from "./lib/findDuplicates";
 import invalidFilenames from "./lib/invalidFilenames";
 import { createNote, CreateType } from "./lib/createNote";
 
+/**
+ * NOTE: Since this is a script, the @returns notations below are referring to
+ * what is printed to stdout
+ */
 async function main() {
   program.name("bear-tracks");
   sqlite3.verbose();
@@ -21,6 +25,9 @@ async function main() {
     mode: sqlite3.OPEN_READONLY,
   });
   try {
+    /**
+     * @returns the duplicated note titles, and how many there are
+     */
     program
       .command("duplicates")
       .description("Find notes with duplicate titles")
@@ -29,6 +36,9 @@ async function main() {
         console.log(columnify(titleCounts));
       });
 
+    /**
+     * @returns the invalid note titles
+     */
     program
       .command("invalids")
       .description("Find notes with invalid titles (as filenames)")
@@ -38,7 +48,7 @@ async function main() {
       });
 
     /**
-     * We'll print the created note UUID to stdout
+     * @returns the created note UUID
      */
     program
       .command("create <note-type>")
