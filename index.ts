@@ -4,6 +4,7 @@ import * as path from "path";
 import * as sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { program } from "commander";
+import * as columnify from "columnify";
 
 import { BEAR_DB } from "./lib/constants";
 import findDuplicates from "./lib/findDuplicates";
@@ -24,9 +25,7 @@ async function main() {
       .description("Find notes with duplicate titles")
       .action(async function () {
         const titleCounts = await findDuplicates(db);
-        console.log(
-          titleCounts.map((val) => `${val.title} -> ${val.count}`).join("\n")
-        );
+        console.log(columnify(titleCounts));
       });
 
     program
