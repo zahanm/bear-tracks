@@ -23,8 +23,10 @@ async function main() {
       .command("duplicates")
       .description("Find notes with duplicate titles")
       .action(async function () {
-        const titles = await findDuplicates(db);
-        console.log(titles.join("\n"));
+        const titleCounts = await findDuplicates(db);
+        console.log(
+          titleCounts.map((val) => `${val.title} -> ${val.count}`).join("\n")
+        );
       });
 
     program
