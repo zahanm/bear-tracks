@@ -7,6 +7,7 @@ import { program } from "commander";
 
 import { BEAR_DB } from "./lib/constants";
 import findDuplicates from "./lib/findDuplicates";
+import invalidFilenames from "./lib/invalidFilenames";
 
 async function main() {
   program.name("bear-tracks");
@@ -23,6 +24,14 @@ async function main() {
       .description("Find notes with duplicate titles")
       .action(async function () {
         const titles = await findDuplicates(db);
+        console.log(titles.join("\n"));
+      });
+
+    program
+      .command("invalids")
+      .description("Find notes with invalid titles (as filenames)")
+      .action(async function () {
+        const titles = await invalidFilenames(db);
         console.log(titles.join("\n"));
       });
 
