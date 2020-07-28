@@ -21,7 +21,10 @@ export async function createNote(type: CreateType): Promise<Note> {
 
 async function createDailyNote(): Promise<Note> {
   const title = moment().format("ddd - MMM D, YYYY");
-  await bearXCallback(title, "Foo");
+  const body = `## Plan
+
+## Done`;
+  await bearXCallback(title, body);
   return {
     title,
   };
@@ -32,7 +35,16 @@ async function createWeeklyNote(): Promise<Note> {
   const title = `Plan for ${moment().format("MMM D")} - ${end_of_week.format(
     "MMM D, YYYY"
   )}`;
-  await bearXCallback(title, "Bar");
+  const body = `## Work
+
+## Me
+
+## Home
+
+## Social
+
+## Daily`;
+  await bearXCallback(title, body);
   return {
     title,
   };
@@ -54,5 +66,6 @@ async function bearXCallback(title: string, md_text: string) {
     text: md_text,
   });
   const x_command = `${x_create}?${q_string}`;
+  // TODO replace this with an actual spawn call
   console.error(`open -g ${x_command}`);
 }
