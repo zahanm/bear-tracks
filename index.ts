@@ -9,6 +9,7 @@ import * as columnify from "columnify";
 import { BEAR_DB } from "./lib/constants";
 import findDuplicates from "./lib/findDuplicates";
 import invalidFilenames from "./lib/invalidFilenames";
+import { createNote, CreateType } from "./lib/createNote";
 
 async function main() {
   program.name("bear-tracks");
@@ -34,6 +35,21 @@ async function main() {
       .action(async function () {
         const titles = await invalidFilenames(db);
         console.log(titles.join("\n"));
+      });
+
+    /**
+     * We'll print the created note UUID to stdout
+     */
+    program
+      .command("create <note-type>")
+      .description("Create a note of the type specified")
+      .action(async function (ntype: CreateType) {
+        if (Object.values(CreateType).indexOf(ntype) < 0) {
+          throw new Error(`Invalid note-type: ${ntype}`);
+        }
+        const note = await createNote(ntype);
+        console.error(`Made "${note.title}"`);
+        console.log(note.uuid);
       });
 
     await program.parseAsync();
