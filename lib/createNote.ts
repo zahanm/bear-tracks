@@ -1,3 +1,4 @@
+import { spawnSync } from "child_process";
 import { stringify as qstringify } from "querystring";
 import * as moment from "moment";
 
@@ -66,6 +67,9 @@ async function bearXCallback(title: string, md_text: string) {
     text: md_text,
   });
   const x_command = `${x_create}?${q_string}`;
-  // TODO replace this with an actual spawn call
-  console.error(`open -g ${x_command}`);
+  console.error(`open -g "${x_command}"`);
+  const { error } = spawnSync("open", ["-g", x_command]);
+  if (error) {
+    throw error;
+  }
 }
