@@ -9,6 +9,7 @@ import { BEAR_DB } from "./lib/constants";
 import findDuplicates from "./lib/findDuplicates";
 
 async function main() {
+  program.name("bear-tracks");
   sqlite3.verbose();
   const bear_db_path = path.join(os.homedir(), BEAR_DB.path);
   const db = await open({
@@ -17,15 +18,12 @@ async function main() {
     mode: sqlite3.OPEN_READONLY,
   });
   try {
-    program.name("bear-tracks");
-
     program
       .command("duplicates")
       .description("Find notes with duplicate titles")
       .action(async function () {
         const titles = await findDuplicates(db);
-        console.log("Notes with duplicated titles:");
-        console.log(titles);
+        console.log(titles.join("\n"));
       });
 
     await program.parseAsync();
@@ -36,4 +34,5 @@ async function main() {
 
 main().catch((err) => {
   console.error(err);
+  process.exitCode = 1;
 });
