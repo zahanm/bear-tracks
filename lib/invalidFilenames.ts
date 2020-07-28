@@ -4,13 +4,14 @@ import { BEAR_DB, FILENAME_PATTERNS } from "./constants";
 export default async function invalidFilenames(
   db: Database
 ): Promise<string[]> {
-  return [];
   const rows = await db.all(
     `select distinct ${BEAR_DB.notes.cols.title} as title
       from ${BEAR_DB.notes.name}
       where ${BEAR_DB.notes.cols.trashed} like '0'`
   );
-  const titles = rows.map((row) => row.title);
+  return rows
+    .map((row) => row.title)
+    .filter((title) => !isValidFilename(title));
 }
 
 export function isValidFilename(title: string): boolean {
