@@ -60,6 +60,9 @@ async function main() {
         console.log(note.title);
       });
 
+    /**
+     * Symlinks the launch-agent plist in place
+     */
     program
       .command("install-agent <note-type>")
       .description("Set up the launch-agent for a particular note type")
