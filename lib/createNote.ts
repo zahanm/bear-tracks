@@ -1,5 +1,5 @@
 import { spawnSync } from "child_process";
-import { stringify as qstringify } from "querystring";
+import { stringify as qstringify, ParsedUrlQueryInput } from "querystring";
 import * as moment from "moment";
 
 export enum CreateType {
@@ -20,12 +20,30 @@ export async function createNote(type: CreateType): Promise<Note> {
   }
 }
 
+interface CREATE_NOTE_OPTIONS extends ParsedUrlQueryInput {
+  show_window: string;
+  open_note: string;
+  pin?: string;
+  title: string;
+  text: string;
+}
+
+const DEFAULT_OPTIONS = {
+  show_window: "no",
+  open_note: "no",
+};
+
 async function createDailyNote(): Promise<Note> {
   const title = moment().format("ddd - MMM D, YYYY");
   const body = `## Plan
 
 ## Done`;
-  await bearXCallback(title, body);
+  await bearXCallback({
+    title,
+    text: body,
+    pin: "yes",
+    ...DEFAULT_OPTIONS,
+  });
   return {
     title,
   };
@@ -45,7 +63,11 @@ async function createWeeklyNote(): Promise<Note> {
 ## Social
 
 ## Daily`;
-  await bearXCallback(title, body);
+  await bearXCallback({
+    title,
+    text: body,
+    ...DEFAULT_OPTIONS,
+  });
   return {
     title,
   };
@@ -57,15 +79,9 @@ async function createWeeklyNote(): Promise<Note> {
  * @param title Note title.
  * @param md_text Note body, as Markdown.
  */
-async function bearXCallback(title: string, md_text: string) {
+async function bearXCallback(options: CREATE_NOTE_OPTIONS) {
   const x_create = "bear://x-callback-url/create";
-  const q_string = qstringify({
-    show_window: "no",
-    open_note: "no",
-    pin: "yes",
-    title: title,
-    text: md_text,
-  });
+  const q_string = qstringify(options);
   const x_command = `${x_create}?${q_string}`;
   console.error(`open -g "${x_command}"`);
   const { error } = spawnSync("open", ["-g", x_command]);
