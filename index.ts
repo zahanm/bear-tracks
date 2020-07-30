@@ -7,7 +7,7 @@ import { program } from "commander";
 import * as columnify from "columnify";
 
 import { BEAR_DB, CreateNoteType } from "./lib/constants";
-import findDuplicates from "./lib/findDuplicates";
+import { findDuplicateNoteCounts } from "./lib/findDuplicates";
 import invalidFilenames from "./lib/invalidFilenames";
 import { createNote } from "./lib/createNote";
 import { installAgent } from "./lib/installAgent";
@@ -33,7 +33,7 @@ async function main() {
       .command("duplicates")
       .description("Find notes with duplicate titles")
       .action(async function () {
-        const titleCounts = await findDuplicates(db);
+        const titleCounts = await findDuplicateNoteCounts(db);
         console.log(columnify(titleCounts));
       });
 
