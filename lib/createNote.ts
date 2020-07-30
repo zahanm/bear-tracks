@@ -1,21 +1,17 @@
 import { spawnSync } from "child_process";
 import { stringify as qstringify, ParsedUrlQueryInput } from "querystring";
 import * as moment from "moment";
-
-export enum CreateType {
-  DAILY = "daily",
-  WEEKLY = "weekly",
-}
+import { CreateNoteType } from "./constants";
 
 export interface Note {
   title: string;
 }
 
-export async function createNote(type: CreateType): Promise<Note> {
+export async function createNote(type: CreateNoteType): Promise<Note> {
   switch (type) {
-    case CreateType.DAILY:
+    case CreateNoteType.DAILY:
       return await createDailyNote();
-    case CreateType.WEEKLY:
+    case CreateNoteType.WEEKLY:
       return await createWeeklyNote();
   }
 }

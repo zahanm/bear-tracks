@@ -22,3 +22,19 @@ export const FILENAME_PATTERNS = {
   invalid: /[/\\*?$@!^&\|~:\.]/,
   ends_in_dash: /-$/,
 };
+
+export enum CreateNoteType {
+  DAILY = "daily",
+  WEEKLY = "weekly",
+}
+
+export const AGENT = {
+  [CreateNoteType.DAILY]: {
+    agentname: "edu.zahanm.bear-tracks.daily.plist",
+    filename: "daily.plist",
+  },
+  [CreateNoteType.WEEKLY]: {
+    agentname: "edu.zahanm.bear-tracks.weekly.plist",
+    filename: "weekly.plist",
+  },
+};

@@ -6,10 +6,11 @@ import { open } from "sqlite";
 import { program } from "commander";
 import * as columnify from "columnify";
 
-import { BEAR_DB } from "./lib/constants";
+import { BEAR_DB, CreateNoteType } from "./lib/constants";
 import findDuplicates from "./lib/findDuplicates";
 import invalidFilenames from "./lib/invalidFilenames";
-import { createNote, CreateType } from "./lib/createNote";
+import { createNote } from "./lib/createNote";
+import { installAgent } from "./lib/installAgent";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
@@ -53,17 +54,29 @@ async function main() {
     program
       .command("create <note-type>")
       .description("Create a note of the type specified")
-      .action(async function (ntype: CreateType) {
-        if (Object.values(CreateType).indexOf(ntype) < 0) {
-          throw new Error(`Invalid note-type: ${ntype}`);
-        }
+      .action(async function (ntype: CreateNoteType) {
+        validateCreateType(ntype);
         const note = await createNote(ntype);
         console.log(note.title);
+      });
+
+    program
+      .command("install-agent <note-type>")
+      .description("Set up the launch-agent for a particular note type")
+      .action(async function (ntype: CreateNoteType) {
+        validateCreateType(ntype);
+        await installAgent(ntype);
       });
 
     await program.parseAsync();
   } finally {
     await db.close();
+  }
+}
+
+function validateCreateType(ntype: CreateNoteType) {
+  if (Object.values(CreateNoteType).indexOf(ntype) < 0) {
+    throw new Error(`Invalid note-type: ${ntype}`);
   }
 }
 
