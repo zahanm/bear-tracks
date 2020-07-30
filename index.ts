@@ -11,6 +11,7 @@ import { findDuplicateNoteCounts } from "./lib/findDuplicates";
 import invalidFilenames from "./lib/invalidFilenames";
 import { createNote } from "./lib/createNote";
 import { installAgent } from "./lib/installAgent";
+import { deduplicateNotes } from "./lib/deduplicateNotes";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
@@ -69,6 +70,16 @@ async function main() {
       .action(async function (ntype: CreateNoteType) {
         validateCreateType(ntype);
         await installAgent(ntype);
+      });
+
+    /**
+     * Writes to Bear.app to de-duplicate the note titles
+     */
+    program
+      .command("de-duplicate")
+      .description("De-duplicate note titles by writing to Bear.app")
+      .action(async function () {
+        await deduplicateNotes(db);
       });
 
     await program.parseAsync();
