@@ -1,7 +1,7 @@
-import { spawnSync } from "child_process";
-import { stringify as qstringify, ParsedUrlQueryInput } from "querystring";
+import { ParsedUrlQueryInput } from "querystring";
 import * as moment from "moment";
 import { CreateNoteType } from "./constants";
+import { bearXCallback, DEFAULT_OPTIONS, XCommand } from "./bearXCallback";
 
 export interface Note {
   title: string;
@@ -24,17 +24,12 @@ interface CREATE_NOTE_OPTIONS extends ParsedUrlQueryInput {
   text: string;
 }
 
-const DEFAULT_OPTIONS = {
-  show_window: "no",
-  open_note: "no",
-};
-
 async function createDailyNote(): Promise<Note> {
   const title = moment().format("ddd - MMM D, YYYY");
   const body = `## Plan
 
 ## Done`;
-  await bearXCallback({
+  await bearApiCreateNote({
     title,
     text: body,
     pin: "yes",
@@ -59,7 +54,7 @@ async function createWeeklyNote(): Promise<Note> {
 ## Social
 
 ## Daily`;
-  await bearXCallback({
+  await bearApiCreateNote({
     title,
     text: body,
     ...DEFAULT_OPTIONS,
@@ -69,19 +64,6 @@ async function createWeeklyNote(): Promise<Note> {
   };
 }
 
-/**
- * Refer to https://bear.app/faq/X-callback-url%20Scheme%20documentation/
- *
- * @param title Note title.
- * @param md_text Note body, as Markdown.
- */
-async function bearXCallback(options: CREATE_NOTE_OPTIONS) {
-  const x_create = "bear://x-callback-url/create";
-  const q_string = qstringify(options);
-  const x_command = `${x_create}?${q_string}`;
-  console.error(`open -g "${x_command}"`);
-  const { error } = spawnSync("open", ["-g", x_command]);
-  if (error) {
-    throw error;
-  }
+async function bearApiCreateNote(options: CREATE_NOTE_OPTIONS) {
+  await bearXCallback(XCommand.CREATE, options);
 }
