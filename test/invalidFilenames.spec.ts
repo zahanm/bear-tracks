@@ -1,7 +1,7 @@
 import { equal, ok } from "assert";
 import { isValidFilename } from "../lib/invalidFilenames";
 
-describe("Typescript usage suite", () => {
+describe("Valid filename checker", () => {
   const valid_name = "foo bar";
   it(`should let a valid name pass: ${valid_name}`, () => {
     ok(isValidFilename(valid_name));
