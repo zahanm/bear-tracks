@@ -12,6 +12,7 @@ import invalidFilenames from "./lib/invalidFilenames";
 import { createNote } from "./lib/createNote";
 import { installAgent } from "./lib/installAgent";
 import { deduplicateNotes } from "./lib/deduplicateNotes";
+import missingTitles from "./lib/missingTitles";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
@@ -48,6 +49,17 @@ async function main() {
       .description("Find notes with invalid titles (as filenames)")
       .action(async function () {
         const titles = await invalidFilenames(program.opts(), db);
+        console.log(titles.join("\n"));
+      });
+
+    /**
+     * @returns notes missing titles
+     */
+    program
+      .command("no-titles")
+      .description("Find notes with missing titles (as an H1 block)")
+      .action(async function () {
+        const titles = await missingTitles(program.opts(), db);
         console.log(titles.join("\n"));
       });
 
