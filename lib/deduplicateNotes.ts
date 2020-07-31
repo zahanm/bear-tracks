@@ -2,13 +2,24 @@ import { Database } from "sqlite";
 import * as moment from "moment";
 
 import { findDuplicateNotes } from "./findDuplicates";
+import { XCommand, bearXCallback, DEFAULT_OPTIONS } from "./bearXCallback";
 
 export async function deduplicateNotes(db: Database) {
   const duplicates = await findDuplicateNotes(db);
-  console.log(`# of notes: ${duplicates.length}`);
-  duplicates.forEach((note) => {
-    console.log(
-      `${note.title} - ${moment(note.creation_date).format("MMM D, YYYY")}`
-    );
-  });
+  console.error(`# of dupes: ${duplicates.length}`);
+  for (const note of duplicates) {
+    const creation = moment(note.creation_date);
+    const newTitle = `${note.title} - ${creation.format("MMM D, YYYY")}`;
+    const lines = note.text.split("\n");
+    lines.shift();
+    lines.unshift(`# ${newTitle}`);
+    const newText = lines.join("\n");
+    await bearXCallback(XCommand.EDIT, {
+      id: note.uuid,
+      mode: "replace_all",
+      text: newText,
+      ...DEFAULT_OPTIONS,
+    });
+    console.error(newTitle);
+  }
 }

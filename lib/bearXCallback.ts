@@ -8,6 +8,7 @@ export const DEFAULT_OPTIONS = {
 
 export enum XCommand {
   CREATE,
+  EDIT,
 }
 
 /**
@@ -34,5 +35,7 @@ function getXURL(command: XCommand): string {
   switch (command) {
     case XCommand.CREATE:
       return "bear://x-callback-url/create";
+    case XCommand.EDIT:
+      return "bear://x-callback-url/add-text";
   }
 }

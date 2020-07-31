@@ -6,6 +6,7 @@ export interface Note {
   uuid: string;
   title: string;
   filename: string;
+  text: string;
   creation_date: Date;
 }
 
@@ -13,7 +14,8 @@ export async function getAllNotes(db: Database): Promise<Note[]> {
   const rows = await db.all(
     `select ${BEAR_DB.notes.cols.title} as title,
       ${BEAR_DB.notes.cols.uuid} as uuid,
-      datetime(${BEAR_DB.notes.cols.creation_date},'unixepoch','31 years','localtime') as creation_date
+      datetime(${BEAR_DB.notes.cols.creation_date},'unixepoch','31 years','localtime') as creation_date,
+      ${BEAR_DB.notes.cols.text} as text
       from ${BEAR_DB.notes.name}
       where ${BEAR_DB.notes.cols.trashed} like '0'`
   );
@@ -22,6 +24,7 @@ export async function getAllNotes(db: Database): Promise<Note[]> {
       uuid: row.uuid,
       title: row.title,
       filename: transformTitleToFilename(row.title),
+      text: row.text,
       creation_date: new Date(row.creation_date),
     };
   });
