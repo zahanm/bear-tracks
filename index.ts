@@ -18,7 +18,9 @@ import { deduplicateNotes } from "./lib/deduplicateNotes";
  * what is printed to stdout
  */
 async function main() {
-  program.name("bear-tracks");
+  program
+    .name("bear-tracks")
+    .option("-d, --debug", "output extra debugging to stderr", false);
   sqlite3.verbose();
   const bear_db_path = path.join(os.homedir(), BEAR_DB.path);
   const db = await open({
@@ -34,7 +36,7 @@ async function main() {
       .command("duplicates")
       .description("Find notes with duplicate titles")
       .action(async function () {
-        const titleCounts = await findDuplicateNoteCounts(db);
+        const titleCounts = await findDuplicateNoteCounts(program.opts(), db);
         console.log(columnify(titleCounts));
       });
 
@@ -45,7 +47,7 @@ async function main() {
       .command("invalids")
       .description("Find notes with invalid titles (as filenames)")
       .action(async function () {
-        const titles = await invalidFilenames(db);
+        const titles = await invalidFilenames(program.opts(), db);
         console.log(titles.join("\n"));
       });
 
@@ -57,7 +59,7 @@ async function main() {
       .description("Create a note of the type specified")
       .action(async function (ntype: CreateNoteType) {
         validateCreateType(ntype);
-        const note = await createNote(ntype);
+        const note = await createNote(program.opts(), ntype);
         console.log(note.title);
       });
 
@@ -69,7 +71,7 @@ async function main() {
       .description("Set up the launch-agent for a particular note type")
       .action(async function (ntype: CreateNoteType) {
         validateCreateType(ntype);
-        await installAgent(ntype);
+        await installAgent(program.opts(), ntype);
       });
 
     /**
@@ -79,7 +81,7 @@ async function main() {
       .command("de-duplicate")
       .description("De-duplicate note titles by writing to Bear.app")
       .action(async function () {
-        await deduplicateNotes(db);
+        await deduplicateNotes(program.opts(), db);
       });
 
     await program.parseAsync();

@@ -18,13 +18,16 @@ export enum XCommand {
  * @param options Parameters for API
  */
 export async function bearXCallback(
+  opts: Record<string, any>,
   command: XCommand,
   options: ParsedUrlQueryInput
 ) {
   const x_url = getXURL(command);
   const q_string = stringify(options);
   const x_command = `${x_url}?${q_string}`;
-  console.error(`open -g "${x_command}"`);
+  if (opts.debug) {
+    console.error(`open -g "${x_command}"`);
+  }
   const { error } = spawnSync("open", ["-g", x_command]);
   if (error) {
     throw error;
