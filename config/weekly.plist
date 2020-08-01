@@ -20,5 +20,10 @@
         <key>Minute</key>
         <integer>1</integer>
     </dict>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin</string>
+    </dict>
 </dict>
 </plist>
