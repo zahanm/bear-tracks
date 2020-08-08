@@ -41,22 +41,25 @@ async function main() {
         console.log(columnify(titleCounts));
       });
 
-    type TitleType = "filenames" | "links";
+    type TitleType = "filename" | "link";
     /**
      * @returns the invalid note titles
      */
     program
       .command("invalids <type>")
-      .description(`Find notes with invalid titles (as "filenames" or "links")`)
+      .description(`Find notes with invalid titles (as "filename" or "link")`)
       .action(async function (type: TitleType) {
         let titles;
         switch (type) {
-          case "filenames":
+          case "filename":
             titles = await invalidFilenames(program.opts(), db);
             break;
-          case "links":
+          case "link":
             titles = await invalidLinks(program.opts(), db);
             break;
+          default:
+            // Need this because the TitleType is coming from user input
+            throw new Error(`Invalid type ${type}`);
         }
 
         console.log(titles.join("\n"));
