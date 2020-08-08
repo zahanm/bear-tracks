@@ -21,7 +21,8 @@ import missingTitles from "./lib/missingTitles";
 async function main() {
   program
     .name("bear-tracks")
-    .option("-d, --debug", "output extra debugging to stderr", false);
+    .option("-d, --debug", "output extra debugging to stderr", false)
+    .option("--write", "allows writes to Bear.app's data stores", false);
   sqlite3.verbose();
   const bear_db_path = path.join(os.homedir(), BEAR_DB.path);
   const db = await open({

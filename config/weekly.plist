@@ -10,6 +10,7 @@
         <string>/Users/zahanm/source/bear-tracks/bin/index.sh</string>
         <string>create</string>
         <string>weekly</string>
+        <string>--write</string>
     </array>
     <key>StartCalendarInterval</key>
     <dict>

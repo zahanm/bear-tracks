@@ -28,6 +28,11 @@ export async function bearXCallback(
   if (opts.debug) {
     console.error(`open -g "${x_command}"`);
   }
+  if (!opts.write) {
+    throw new Error(
+      `Need to specify --write in order to mutate Bear.app data"`
+    );
+  }
   const { error } = spawnSync("open", ["-g", x_command]);
   if (error) {
     throw error;
