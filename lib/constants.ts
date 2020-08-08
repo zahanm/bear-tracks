@@ -27,17 +27,14 @@ export const LINK_PATTERNS = {
   invalid: /[\|]/,
 };
 
-export enum CreateNoteType {
-  DAILY = "daily",
-  WEEKLY = "weekly",
-}
+export type CreateNoteType = "daily" | "weekly";
 
-export const AGENT = {
-  [CreateNoteType.DAILY]: {
+export const AGENT: Record<CreateNoteType, Record<string, string>> = {
+  daily: {
     agentname: "edu.zahanm.bear-tracks.daily.plist",
     filename: "daily.plist",
   },
-  [CreateNoteType.WEEKLY]: {
+  weekly: {
     agentname: "edu.zahanm.bear-tracks.weekly.plist",
     filename: "weekly.plist",
   },

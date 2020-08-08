@@ -9,7 +9,7 @@ import * as columnify from "columnify";
 import { BEAR_DB, CreateNoteType } from "./lib/constants";
 import { findDuplicateNoteCounts } from "./lib/findDuplicates";
 import { invalidFilenames, invalidLinks } from "./lib/invalids";
-import { createNote } from "./lib/createNote";
+import { createDailyNote, createWeeklyNote } from "./lib/createNote";
 import { installAgent } from "./lib/installAgent";
 import { deduplicateNotes } from "./lib/deduplicateNotes";
 import missingTitles from "./lib/missingTitles";
@@ -61,7 +61,6 @@ async function main() {
             // Need this because the TitleType is coming from user input
             throw new Error(`Invalid type ${type}`);
         }
-
         console.log(titles.join("\n"));
       });
 
@@ -83,8 +82,17 @@ async function main() {
       .command("create <note-type>")
       .description("Create a note of the type specified")
       .action(async function (ntype: CreateNoteType) {
-        validateCreateType(ntype);
-        const note = await createNote(program.opts(), ntype);
+        let note;
+        switch (ntype) {
+          case "daily":
+            note = await createDailyNote(program.opts());
+            break;
+          case "weekly":
+            note = await createWeeklyNote(program.opts());
+            break;
+          default:
+            throw new Error(`Invalid note-type: ${ntype}`);
+        }
         console.log(note.title);
       });
 
@@ -95,7 +103,9 @@ async function main() {
       .command("install-agent <note-type>")
       .description("Set up the launch-agent for a particular note type")
       .action(async function (ntype: CreateNoteType) {
-        validateCreateType(ntype);
+        if (!(ntype in ["daily", "weekly"])) {
+          throw new Error(`Invalid note-type: ${ntype}`);
+        }
         await installAgent(program.opts(), ntype);
       });
 
@@ -116,7 +126,7 @@ async function main() {
 }
 
 function validateCreateType(ntype: CreateNoteType) {
-  if (Object.values(CreateNoteType).indexOf(ntype) < 0) {
+  if (ntype in ["daily", "weekly"]) {
     throw new Error(`Invalid note-type: ${ntype}`);
   }
 }
