@@ -23,6 +23,10 @@ export const FILENAME_PATTERNS = {
   ends_in_dash: /-$/,
 };
 
+export const LINK_PATTERNS = {
+  invalid: /[\|]/,
+};
+
 export enum CreateNoteType {
   DAILY = "daily",
   WEEKLY = "weekly",

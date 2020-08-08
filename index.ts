@@ -8,7 +8,7 @@ import * as columnify from "columnify";
 
 import { BEAR_DB, CreateNoteType } from "./lib/constants";
 import { findDuplicateNoteCounts } from "./lib/findDuplicates";
-import invalidFilenames from "./lib/invalidFilenames";
+import { invalidFilenames, invalidLinks } from "./lib/invalids";
 import { createNote } from "./lib/createNote";
 import { installAgent } from "./lib/installAgent";
 import { deduplicateNotes } from "./lib/deduplicateNotes";
@@ -41,14 +41,24 @@ async function main() {
         console.log(columnify(titleCounts));
       });
 
+    type TitleType = "filenames" | "links";
     /**
      * @returns the invalid note titles
      */
     program
-      .command("invalids")
-      .description("Find notes with invalid titles (as filenames)")
-      .action(async function () {
-        const titles = await invalidFilenames(program.opts(), db);
+      .command("invalids <type>")
+      .description(`Find notes with invalid titles (as "filenames" or "links")`)
+      .action(async function (type: TitleType) {
+        let titles;
+        switch (type) {
+          case "filenames":
+            titles = await invalidFilenames(program.opts(), db);
+            break;
+          case "links":
+            titles = await invalidLinks(program.opts(), db);
+            break;
+        }
+
         console.log(titles.join("\n"));
       });
 
