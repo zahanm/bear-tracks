@@ -25,8 +25,8 @@ describe("Duplicate counters", () => {
 
   it(`should have the same # of notes either way`, async () => {
     const [duplicates, counts] = await Promise.all([
-      findDuplicateNotes(db),
-      findDuplicateNoteCounts(db),
+      findDuplicateNotes({}, db),
+      findDuplicateNoteCounts({}, db),
     ]);
     equal(
       counts.reduce((acc, val) => acc + val.count, 0),
