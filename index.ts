@@ -26,9 +26,9 @@ async function main() {
     .option("-d, --debug", "output extra debugging to stderr", false)
     .option("--write", "allows writes to Bear.app's data stores", false);
   sqlite3.verbose();
-  const bear_db_path = path.join(os.homedir(), BEAR_DB.path);
+  const bearDbPath = path.join(os.homedir(), BEAR_DB.path);
   const db = await open({
-    filename: bear_db_path,
+    filename: bearDbPath,
     driver: sqlite3.Database,
     mode: sqlite3.OPEN_READONLY,
   });
@@ -128,7 +128,7 @@ async function main() {
      * @returns transformed note Markdown text
      */
     program
-      .command("transform <dest-app> <file>")
+      .command("transform <destination-app> <file>")
       .description("Transform syntax to/from Bear.app <> Obsidian.app")
       .action(async function (dest: DestinationApp, file: string) {
         const original = await fs.readFile(file, { encoding: "utf8" });
