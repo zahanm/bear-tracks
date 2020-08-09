@@ -10,6 +10,7 @@ and ::another:: highlight.
 
 #these/are/nested/tags #not
 #mutli word/nested tags#
+#tags-with/hypens
 
 #hashtag
 
@@ -35,7 +36,8 @@ Hope you are doing well!
 and ==another== highlight.
 
 #these_are_nested_tags #not
-#mutli word/nested tags#
+#mutli word_nested tags#
+#tags-with_hypens
 
 #hashtag
 

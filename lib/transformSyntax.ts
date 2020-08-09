@@ -1,11 +1,11 @@
 const PATTERNS = {
   bear: {
     highlight: /(^|\s)\:\:(\S(.*?)\S)?\:\:/gm,
-    nested_tags: /\#\b(\w*\/)+/gm,
+    nested_tags: /\#\b([\w \-]*\/)+/gm,
   },
   obsidian: {
     highlight: /(^|\s)\=\=(\S(.*?)\S)?\=\=/gm,
-    nested_tags: /\#\b(\w*\_)+/gm,
+    nested_tags: /\#\b([\w \-]*\_)+/gm,
   },
 };
 
