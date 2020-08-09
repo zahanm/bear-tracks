@@ -7,15 +7,20 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "name": "Run bear-tracks",
+      "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/index.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
-      "outFiles": [
-        "${workspaceFolder}/out/**/*.js"
-      ]
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
+    },
+    {
+      "args": ["--timeout", "999999", "--colors", "${workspaceFolder}/test"],
+      "internalConsoleOptions": "openOnSessionStart",
+      "name": "Test",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node"
     }
   ]
 }
