@@ -30,7 +30,7 @@ class Syncer {
   ) {}
 
   async run() {
-    console.error("Starting sync now.");
+    console.error("Starting sync.");
     if (this.opts.debug) {
       console.error(`Temp folder: ${this.tempFolder}`);
     }
@@ -48,7 +48,10 @@ class Syncer {
       process.stderr.write("x");
     }
     process.stderr.write("\n");
-    console.error(`Written notes to temp folder`);
+    if (this.opts.debug) {
+      console.error(`Written notes to temp folder`);
+    }
+    console.error("Sync complete.");
   }
 }
 

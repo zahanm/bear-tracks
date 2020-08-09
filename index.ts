@@ -161,7 +161,6 @@ async function main() {
           throw new Error(`Must provide valid folder: ${dest}`);
         }
         await sync(program.opts(), db, dest);
-        console.error("Complete!");
       });
 
     await program.parseAsync();
