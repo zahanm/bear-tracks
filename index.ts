@@ -134,10 +134,10 @@ async function main() {
         const original = await fs.readFile(file, { encoding: "utf8" });
         let transformed;
         switch (dest) {
-          case "Bear.app":
+          case "Obsidian.app":
             transformed = await transformToObsidian(program.opts(), original);
             break;
-          case "Obsidian.app":
+          case "Bear.app":
             transformed = await transformToBear(program.opts(), original);
             break;
           default:
