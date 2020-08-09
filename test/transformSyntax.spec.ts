@@ -41,18 +41,18 @@ and ==another== highlight.
 
 #hashtag
 
-- An unordered todo list
-- of things
-+ some checked
-- some not
-  - some indented
-- others not
+- [ ] An unordered todo list
+- [ ] of things
+- [x] some checked
+- [ ] some not
+  - [ ] some indented
+- [ ] others not
 
-+ all
-+ checked
+- [x] all
+- [x] checked
 
-- all
-- unchecked
+- [ ] all
+- [ ] unchecked
 `;
 
 describe("Bear.app <> Obsidian.app syntax transformer ", () => {
