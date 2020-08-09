@@ -5,7 +5,8 @@ import * as os from "os";
 import { Database } from "sqlite";
 
 import { BEAR_DB, SYNC } from "./constants";
-import { getAllNotes } from "./getAllNotes";
+import { getAllNotes, Note } from "./getAllNotes";
+import { transformToObsidian } from "./transformSyntax";
 
 export async function sync(
   opts: Record<string, any>,
@@ -30,8 +31,24 @@ class Syncer {
 
   async run() {
     console.error("Starting sync now.");
+    if (this.opts.debug) {
+      console.error(`Temp folder: ${this.tempFolder}`);
+    }
     const notes = await getAllNotes(this.opts, this.db);
     console.error(`${notes.length} notes to write.`);
+    for (const note of notes) {
+      const transformedText = await transformToObsidian(
+        this.opts,
+        note.text,
+        note.uuid
+      );
+      const destFile = path.join(this.tempFolder, `${note.filename}.md`);
+      await fs.writeFile(destFile, transformedText);
+      await fs.utimes(destFile, note.modification_date, note.modification_date);
+      process.stderr.write("x");
+    }
+    process.stderr.write("\n");
+    console.error(`Written notes to temp folder`);
   }
 }
 
