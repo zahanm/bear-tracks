@@ -152,12 +152,6 @@ async function main() {
   }
 }
 
-function validateCreateType(ntype: CreateNoteType) {
-  if (ntype in ["daily", "weekly"]) {
-    throw new Error(`Invalid note-type: ${ntype}`);
-  }
-}
-
 main().catch((err) => {
   console.error(err);
   process.exitCode = 1;
