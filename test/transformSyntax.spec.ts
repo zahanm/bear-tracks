@@ -8,7 +8,8 @@ Hope you are doing well!
 ::This is a highlight.:: but this is not::
 and ::another:: highlight.
 
-#these/are/nested/tags #another
+#these/are/nested/tags #not
+#mutli word/nested tags#
 
 #hashtag
 
@@ -33,7 +34,8 @@ Hope you are doing well!
 ==This is a highlight.== but this is not::
 and ==another== highlight.
 
-#these/are/nested/tags #another
+#these_are_nested_tags #not
+#mutli word/nested tags#
 
 #hashtag
 
