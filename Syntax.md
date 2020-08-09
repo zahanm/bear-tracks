@@ -12,7 +12,7 @@ Which turns into `#tags_like_this`.
 `_` replaces `/`, which means I cannot use `_` in tag names in my notes.
 
 I'm not supportings special characters (though Bear.app does),
-so `#tags\*with/\$characters`, I won't look for.
+so `#tags*with/$characters`, I won't look for.
 
 Also, trailing slash `#foo/` is not supported in my world either.
 
