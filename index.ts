@@ -125,6 +125,7 @@ async function main() {
     type DestinationApp = "Bear.app" | "Obsidian.app";
     /**
      * Transforms to/from Bear.app <> Obsidian.app syntax
+     * @returns transformed note Markdown text
      */
     program
       .command("transform <dest-app> <file>")
