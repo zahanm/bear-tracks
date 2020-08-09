@@ -1,5 +1,6 @@
 import * as os from "os";
 import * as path from "path";
+import * as fs from "fs/promises";
 
 import * as sqlite3 from "sqlite3";
 import { open } from "sqlite";
@@ -13,6 +14,7 @@ import { createDailyNote, createWeeklyNote } from "./lib/createNote";
 import { installAgent } from "./lib/installAgent";
 import { deduplicateNotes } from "./lib/deduplicateNotes";
 import missingTitles from "./lib/missingTitles";
+import { transformToObsidian, transformToBear } from "./lib/transformSyntax";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
@@ -59,7 +61,7 @@ async function main() {
             titles = await invalidLinks(program.opts(), db);
             break;
           default:
-            // Need this because the TitleType is coming from user input
+            // Need this because the string literal is coming from user input
             throw new Error(`Invalid type ${type}`);
         }
         console.log(titles.join("\n"));
@@ -118,6 +120,30 @@ async function main() {
       .description("De-duplicate note titles by writing to Bear.app")
       .action(async function () {
         await deduplicateNotes(program.opts(), db);
+      });
+
+    type DestinationApp = "Bear.app" | "Obsidian.app";
+    /**
+     * Transforms to/from Bear.app <> Obsidian.app syntax
+     */
+    program
+      .command("transform <dest-app> <file>")
+      .description("Transform syntax to/from Bear.app <> Obsidian.app")
+      .action(async function (dest: DestinationApp, file: string) {
+        const original = await fs.readFile(file, { encoding: "utf8" });
+        let transformed;
+        switch (dest) {
+          case "Bear.app":
+            transformed = await transformToObsidian(program.opts(), original);
+            break;
+          case "Obsidian.app":
+            transformed = await transformToBear(program.opts(), original);
+            break;
+          default:
+            // Need this because the string literal is coming from user input
+            throw new Error(`Invalid type ${dest}`);
+        }
+        console.log(transformed);
       });
 
     await program.parseAsync();
