@@ -5,7 +5,8 @@ const bear_note = `# Hello World
 
 Hope you are doing well!
 
-::This is a highlight.::
+::This is a highlight.:: but this is not::
+and ::another:: highlight.
 
 #these/are/nested/tags #another
 
@@ -29,7 +30,8 @@ const obsidian_note = `# Hello World
 
 Hope you are doing well!
 
-::This is a highlight.::
+==This is a highlight.== but this is not::
+and ==another== highlight.
 
 #these/are/nested/tags #another
 
