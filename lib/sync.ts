@@ -7,6 +7,7 @@ import { Database } from "sqlite";
 import { BEAR_DB, SYNC } from "./constants";
 import { getAllNotes, Note } from "./getAllNotes";
 import { transformToObsidian } from "./transformSyntax";
+import { spawnSync } from "child_process";
 
 export async function sync(
   opts: Record<string, any>,
@@ -31,12 +32,15 @@ class Syncer {
 
   async run() {
     console.error("Starting sync.");
+    // TODO: sync edits back in to bear
+    console.error("Starting export.");
     if (this.opts.debug) {
       console.error(`Temp folder: ${this.tempFolder}`);
     }
     const notes = await getAllNotes(this.opts, this.db);
     console.error(`${notes.length} notes to export.`);
     await this.writeToTempFolder(notes);
+    await this.rsyncTempToDestination();
     console.error("Sync complete.");
   }
 
@@ -68,6 +72,36 @@ class Syncer {
       console.error(`Written notes to temp folder`);
     }
   }
+
+  /**
+   * Moves markdown files to new folder using rsync:
+   * This is a very important step!
+   * By first exporting all Bear notes to an emptied temp folder,
+   * rsync will only update destination if modified or size have changed.
+   * So only changed notes will be synced by Dropbox or OneDrive destinations.
+   * Rsync will also delete notes on destination if deleted in Bear.
+   * So doing it this way saves a lot of otherwise very complex programing.
+   * Thank you very much, Rsync! ;)
+   *
+   * And thank you, https://github.com/markgrovs/Bear-Markdown-Export for this technique!
+   */
+  private async rsyncTempToDestination() {
+    const args = [
+      "--recursive",
+      "--times",
+      "--extended-attributes",
+      "--delete",
+      this.tempFolder + path.sep,
+      this.destFolder,
+    ];
+    if (this.opts.debug) {
+      console.error(`rsync "${args.join('" "')}"`);
+    }
+    const { error } = spawnSync("rsync", args);
+    if (error) {
+      throw error;
+    }
+  }
 }
 
 async function dbIsModified(destFolder: string): Promise<boolean> {
@@ -84,9 +118,13 @@ async function getMTime(file: string) {
   return stat.mtime;
 }
 
-async function fileExists(file: string) {
-  const stat = await fs.stat(file);
-  return stat.isFile();
+async function fileExists(file: string): Promise<boolean> {
+  try {
+    await fs.access(file);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function createTempFolder() {
