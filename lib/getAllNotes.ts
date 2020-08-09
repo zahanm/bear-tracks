@@ -8,6 +8,7 @@ export interface Note {
   filename: string;
   text: string;
   creation_date: Date;
+  modification_date: Date;
 }
 
 export async function getAllNotes(
@@ -18,9 +19,10 @@ export async function getAllNotes(
   select ${BEAR_DB.notes.cols.title} as title,
     ${BEAR_DB.notes.cols.uuid} as uuid,
     datetime(${BEAR_DB.notes.cols.creation_date}, 'unixepoch', '31 years', 'localtime') as creation_date,
+    datetime(${BEAR_DB.notes.cols.modification_date}, 'unixepoch', '31 years', 'localtime') as modification_date,
     ${BEAR_DB.notes.cols.text} as text
     from ${BEAR_DB.notes.name}
-    where ${BEAR_DB.notes.cols.trashed} like '0'`;
+    where ${BEAR_DB.notes.cols.trashed} like '0'`.trim();
   if (opts.debug) {
     console.error(query);
   }
@@ -32,6 +34,7 @@ export async function getAllNotes(
       filename: transformTitleToFilename(row.title),
       text: row.text,
       creation_date: new Date(row.creation_date),
+      modification_date: new Date(row.modification_date),
     };
   });
 }
