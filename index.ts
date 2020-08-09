@@ -15,6 +15,7 @@ import { installAgent } from "./lib/installAgent";
 import { deduplicateNotes } from "./lib/deduplicateNotes";
 import missingTitles from "./lib/missingTitles";
 import { transformToObsidian, transformToBear } from "./lib/transformSyntax";
+import { sync } from "./lib/sync";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
@@ -145,6 +146,22 @@ async function main() {
             throw new Error(`Invalid type ${dest}`);
         }
         console.log(transformed);
+      });
+
+    /**
+     * Sync Bear.app <> local folder
+     * Writes out all the notes with the Obsidian.app syntax transformations.
+     */
+    program
+      .command("sync <destination-folder>")
+      .description("Transform syntax to/from Bear.app <> Obsidian.app")
+      .action(async function (dest: string) {
+        const stat = await fs.stat(dest);
+        if (!stat.isDirectory()) {
+          throw new Error(`Must provide valid folder: ${dest}`);
+        }
+        await sync(db, dest);
+        console.error("Complete!");
       });
 
     await program.parseAsync();

@@ -39,3 +39,10 @@ export const AGENT: Record<CreateNoteType, Record<string, string>> = {
     filename: "weekly.plist",
   },
 };
+
+export const SYNC = {
+  files: {
+    SYNC: ".sync-time.log",
+    EXPORT: ".export-time.log",
+  },
+};

@@ -10,6 +10,7 @@
       "name": "Run bear-tracks",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/index.ts",
+      "args": ["sync", "/Users/zahanm/Documents/Bear Notes/"],
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/out/**/*.js"]
     },
