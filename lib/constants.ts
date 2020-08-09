@@ -42,7 +42,10 @@ export const AGENT: Record<CreateNoteType, Record<string, string>> = {
 
 export const SYNC = {
   files: {
-    SYNC: ".sync-time.log",
-    EXPORT: ".export-time.log",
+    sync: ".sync-time.log",
+    export: ".export-time.log",
+  },
+  locations: {
+    temp_prefix: "edu.zahanm.bear-tracks.sync-",
   },
 };

@@ -160,7 +160,7 @@ async function main() {
         if (!stat.isDirectory()) {
           throw new Error(`Must provide valid folder: ${dest}`);
         }
-        await sync(db, dest);
+        await sync(program.opts(), db, dest);
         console.error("Complete!");
       });
 
