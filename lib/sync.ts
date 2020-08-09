@@ -35,7 +35,13 @@ class Syncer {
       console.error(`Temp folder: ${this.tempFolder}`);
     }
     const notes = await getAllNotes(this.opts, this.db);
-    console.error(`${notes.length} notes to write.`);
+    console.error(`${notes.length} notes to export.`);
+    await this.writeToTempFolder(notes);
+    console.error("Sync complete.");
+  }
+
+  private async writeToTempFolder(notes: Note[]) {
+    // Notes
     for (const note of notes) {
       const transformedText = await transformToObsidian(
         this.opts,
@@ -48,10 +54,19 @@ class Syncer {
       process.stderr.write("x");
     }
     process.stderr.write("\n");
+    // sync metadata files
+    const now = new Date();
+    await fs.writeFile(
+      path.join(this.tempFolder, SYNC.files.export),
+      `Exported at: ${now.toISOString()}`
+    );
+    await fs.writeFile(
+      path.join(this.tempFolder, SYNC.files.sync),
+      `Synced at: ${now.toISOString()}`
+    );
     if (this.opts.debug) {
       console.error(`Written notes to temp folder`);
     }
-    console.error("Sync complete.");
   }
 }
 
