@@ -14,20 +14,27 @@ const PATTERNS = {
       unchecked: /(^\s*)\- \[ \](?=\s\w)/gm,
       checked: /(^\s*)\- \[x\](?=\s\w)/gm,
     },
+    uuid: /\n<!-- {BearID:[\w\-]+} -->\n/,
   },
 };
 
 export async function transformToObsidian(
   opts: Record<string, any>,
-  content: string
+  content: string,
+  uuid?: string
 ): Promise<string> {
-  return content
+  const text = content
     .replace(PATTERNS.bear.highlight, "$1==$2==")
     .replace(PATTERNS.bear.nested_tags, (match: string) => {
       return match.replace(/\//g, "_");
     })
     .replace(PATTERNS.bear.todo.unchecked, "$1- [ ]")
     .replace(PATTERNS.bear.todo.checked, "$1- [x]");
+  if (uuid) {
+    return appendUUID(text, uuid);
+  } else {
+    return text;
+  }
 }
 
 export async function transformToBear(
@@ -40,5 +47,10 @@ export async function transformToBear(
       return match.replace(/\_/g, "/");
     })
     .replace(PATTERNS.obsidian.todo.unchecked, "$1-")
-    .replace(PATTERNS.obsidian.todo.checked, "$1+");
+    .replace(PATTERNS.obsidian.todo.checked, "$1+")
+    .replace(PATTERNS.obsidian.uuid, "");
+}
+
+function appendUUID(text: string, uuid: string): string {
+  return text + `\n<!-- {BearID:${uuid}} -->\n`;
 }

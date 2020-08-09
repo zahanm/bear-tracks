@@ -57,11 +57,16 @@ and ==another== highlight.
 
 - [ ] all
 - [ ] unchecked
+
+<!-- {BearID:FOO-BAR-BAZ} -->
 `;
 
 describe("Bear.app <> Obsidian.app syntax transformer ", () => {
   it("should transform Bear.app -> Obsidian.app", async () => {
-    equal(await transformToObsidian({}, bear_note), obsidian_note);
+    equal(
+      await transformToObsidian({}, bear_note, "FOO-BAR-BAZ"),
+      obsidian_note
+    );
   });
 
   it("should transform Obsidian.app -> Bear.app", async () => {
