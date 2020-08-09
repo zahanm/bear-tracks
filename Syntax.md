@@ -14,7 +14,7 @@ Which turns into `#tags_like_this`.
 I'm not supportings special characters (though Bear.app does),
 so `#tags*with/$characters`, I won't look for.
 
-Also, trailing slash `#foo/` is not supported in my world either.
+Also, trailing slash `#foo/` is not supported in my world either. In Bear, the trailing slash would be ignored, but in Obsidian it won't. So don't use 'em.
 
 I do support `#tags with spaces/that are nested#`. That will become `#tags with spaces_that are nested#`.
 

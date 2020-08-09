@@ -12,6 +12,8 @@ and ::another:: highlight.
 #mutli word/nested tags#
 #tags-with/hypens
 
+#trailing/slash/ (Do not use!)
+
 #hashtag
 
 - An unordered todo list
@@ -38,6 +40,8 @@ and ==another== highlight.
 #these_are_nested_tags #not
 #mutli word_nested tags#
 #tags-with_hypens
+
+#trailing_slash_ (Do not use!)
 
 #hashtag
 
