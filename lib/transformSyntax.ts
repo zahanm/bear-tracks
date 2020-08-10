@@ -1,3 +1,5 @@
+import { SYNC } from "./constants";
+
 const PATTERNS = {
   bear: {
     highlight: /(^|\s)\:\:(\S(.*?)\S)?\:\:/gm,
@@ -14,7 +16,6 @@ const PATTERNS = {
       unchecked: /(^\s*)\- \[ \](?=\s\w)/gm,
       checked: /(^\s*)\- \[x\](?=\s\w)/gm,
     },
-    uuid: /\n<!-- {BearID:[\w\-]+} -->\n/,
   },
 };
 
@@ -48,7 +49,7 @@ export async function transformToBear(
     })
     .replace(PATTERNS.obsidian.todo.unchecked, "$1-")
     .replace(PATTERNS.obsidian.todo.checked, "$1+")
-    .replace(PATTERNS.obsidian.uuid, "");
+    .replace(SYNC.patterns.uuid, "");
 }
 
 function appendUUID(text: string, uuid: string): string {

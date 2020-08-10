@@ -49,4 +49,7 @@ export const SYNC = {
     temp_prefix: "edu.zahanm.bear-tracks.sync-",
   },
   supported: new Set([".md"]),
+  patterns: {
+    uuid: /\n<!-- {BearID:([\w\-]+)} -->\n/,
+  },
 };
