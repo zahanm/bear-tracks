@@ -17,3 +17,8 @@ being imported has been modified in Bear.app after that,
 I treat it as a conflict.
 
 Then I import the conflicted file as a new note.
+
+## Log
+
+Look at `bear-tracks-sync.log` (in the destination folder)
+for a history of your syncs and conflicts.
