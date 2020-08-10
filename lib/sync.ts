@@ -76,16 +76,15 @@ class Syncer {
       }
       const fileTs = await getMTime(file);
       if (fileTs > syncTs) {
-        if (this.opts.debug) {
-          console.error(`Import: ${entry.name}`);
-        }
+        console.error(`Import: ${entry.name}`);
         const text = await fs.readFile(file, { encoding: "utf8" });
         const uuid = findUUID(text);
+        const title = findTitle(text, entry.name);
         const transformed = await transformToBear(this.opts, text);
         if (this.opts.debug) {
           process.stderr.write(transformed + "\n");
         }
-        await this.updateNoteInBear(uuid, transformed, fileTs, exportTs);
+        await this.updateNoteInBear(uuid, transformed, title, fileTs, exportTs);
       }
     }
     // TODO put this back in once I'm done working on sync
@@ -95,23 +94,25 @@ class Syncer {
   private async updateNoteInBear(
     uuid: string | null,
     text: string,
+    title: string,
     mtime: Date,
     lastExportTs: Date
   ) {
     if (uuid != null) {
       // update existing note
-      // TODO - give a title, otherwise Bear duplicates it
       // TODO check for sync conflict
       await bearXCallback(this.opts, XCommand.EDIT, {
         id: uuid,
-        mode: "replace",
+        mode: "replace_all",
         text,
+        title,
         ...DEFAULT_OPTIONS,
       });
     } else {
       // create a new note
       await bearApiCreateNote(this.opts, {
         text,
+        title,
         ...DEFAULT_OPTIONS,
       });
     }
@@ -217,6 +218,14 @@ function findUUID(text: string): string | null {
   const matches = text.match(SYNC.patterns.uuid);
   if (!matches) {
     return null;
+  }
+  return matches[1];
+}
+
+function findTitle(text: string, filename: string): string {
+  const matches = text.match(SYNC.patterns.title);
+  if (!matches) {
+    throw new Error(`This note doesn't have a title: ${filename}`);
   }
   return matches[1];
 }

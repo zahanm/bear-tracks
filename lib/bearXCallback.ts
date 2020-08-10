@@ -5,7 +5,7 @@ export interface CREATE_NOTE_OPTIONS extends ParsedUrlQueryInput {
   show_window: string;
   open_note: string;
   pin?: string;
-  title?: string;
+  title: string;
   text: string;
 }
 

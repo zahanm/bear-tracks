@@ -51,5 +51,6 @@ export const SYNC = {
   supported: new Set([".md"]),
   patterns: {
     uuid: /\n<!-- {BearID:([\w\-]+)} -->\n/,
+    title: /^#\s+(.+)\n/,
   },
 };
