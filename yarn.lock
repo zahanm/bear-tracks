@@ -19,6 +19,18 @@
   dependencies:
     moment "*"
 
+"@types/ncp@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@types/ncp/-/ncp-2.0.4.tgz#16c9e7fa2c849d429a1b142648987164b06bf490"
+  integrity sha512-erpimpT1pH8QfeNg77ypnjwz6CGMqrnL4DewVbqFzD9FXzSULjmG3KzjZnLNe7bzTSZm2W9DpkHyqop1g1KmgQ==
+  dependencies:
+    "@types/node" "*"
+
+"@types/node@*":
+  version "14.0.27"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.27.tgz#a151873af5a5e851b51b3b065c9e63390a9e0eb1"
+  integrity sha512-kVrqXhbclHNHGu9ztnAwSncIgJv/FaxmzXJvGXNdcCpV1b8u1/Mi6z6m0vwy0LzKeXFTPLH0NzwmoJ3fNCIq0g==
+
 "@types/node@^14.0.26":
   version "14.0.26"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.26.tgz#22a3b8a46510da8944b67bfc27df02c34a35331c"
@@ -962,6 +974,11 @@ ms@2.1.2, ms@^2.1.1:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
+
+ncp@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ncp/-/ncp-2.0.0.tgz#195a21d6c46e361d2fb1281ba38b91e9df7bdbb3"
+  integrity sha1-GVoh1sRuNh0vsSgbo4uR6d9727M=
 
 needle@^2.2.1:
   version "2.5.0"

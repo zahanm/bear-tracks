@@ -49,6 +49,7 @@ export const SYNC = {
     temp_prefix: "edu.zahanm.bear-tracks.sync-",
   },
   supported: new Set([".md"]),
+  preserved: [".obsidian"],
   patterns: {
     uuid: /\n<!-- {BearID:([\w\-]+)} -->\n/,
     title: /^#\s+(.+)\n/,

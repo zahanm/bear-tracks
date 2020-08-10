@@ -2,9 +2,11 @@ import { spawnSync } from "child_process";
 import * as fs from "fs/promises";
 import * as os from "os";
 import * as path from "path";
+import { promisify } from "util";
 
 import { Database } from "sqlite";
 import * as moment from "moment";
+import { ncp as ncpCallback } from "ncp";
 
 import {
   bearApiCreateNote,
@@ -15,6 +17,8 @@ import {
 import { BEAR_DB, SYNC } from "./constants";
 import { getAllNotes, Note, getNote } from "./getAllNotes";
 import { transformToBear, transformToObsidian } from "./transformSyntax";
+
+const ncp = promisify(ncpCallback);
 
 export async function sync(
   opts: Record<string, any>,
@@ -44,6 +48,7 @@ class Syncer {
     const notes = await getAllNotes(this.opts, this.db);
     console.error(`${notes.length} notes to export.`);
     await this.writeToTempFolder(notes);
+    await this.preserveExternalData();
     await this.rsyncTempToDestination();
     console.error("Sync complete.");
   }
@@ -157,6 +162,24 @@ class Syncer {
     await fs.writeFile(path.join(this.tempFolder, SYNC.files.sync), "Synced");
     if (this.opts.debug) {
       console.error(`Written notes to temp folder`);
+    }
+  }
+
+  /**
+   * Some folders, like the Obsidian metadata, are written in destFolder
+   * Unfortunately, then get cleared on each export, because we're using
+   * `rsync --delete`.
+   *
+   * This copies them out to tempFolder.
+   */
+  private async preserveExternalData() {
+    for (const entry of SYNC.preserved) {
+      const from = path.join(this.destFolder, entry);
+      const to = path.join(this.tempFolder, entry);
+      if (this.opts.debug) {
+        console.error(`cp -R ${from} ${to}`);
+      }
+      await ncp(from, to);
     }
   }
 
