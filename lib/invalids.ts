@@ -33,9 +33,9 @@ async function noteTitles(
 }
 
 export function isValidFilename(title: string): boolean {
-  return (
-    !FILENAME_PATTERNS.invalid.test(title) &&
-    !FILENAME_PATTERNS.ends_in_dash.test(title)
+  return !(
+    FILENAME_PATTERNS.invalid.test(title) ||
+    FILENAME_PATTERNS.ends_in_dash.test(title)
   );
 }
 
