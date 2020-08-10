@@ -70,7 +70,8 @@ class Syncer {
         }
         continue;
       }
-      if ((await getMTime(file)) > syncTs) {
+      const fileTs = await getMTime(file);
+      if (fileTs > syncTs) {
         if (this.opts.debug) {
           console.error(`Import: ${entry.name}`);
         }
@@ -79,10 +80,18 @@ class Syncer {
         if (this.opts.debug) {
           process.stderr.write(transformed + "\n");
         }
-        // TODO write to Bear.app
+        await this.updateNoteInBear(transformed, fileTs, exportTs);
       }
     }
     await updateMTime(syncFile, new Date());
+  }
+
+  private async updateNoteInBear(
+    text: string,
+    mtime: Date,
+    lastExportTs: Date
+  ) {
+    const uuid = findUUID(text);
   }
 
   private async writeToTempFolder(notes: Note[]) {
@@ -103,15 +112,11 @@ class Syncer {
     }
     process.stderr.write("\n");
     // sync metadata files
-    const now = new Date();
     await fs.writeFile(
       path.join(this.tempFolder, SYNC.files.export),
-      `Exported at: ${now.toISOString()}`
+      "Exported"
     );
-    await fs.writeFile(
-      path.join(this.tempFolder, SYNC.files.sync),
-      `Synced at: ${now.toISOString()}`
-    );
+    await fs.writeFile(path.join(this.tempFolder, SYNC.files.sync), "Synced");
     if (this.opts.debug) {
       console.error(`Written notes to temp folder`);
     }
@@ -183,4 +188,12 @@ async function fileExists(file: string): Promise<boolean> {
 
 async function createTempFolder() {
   return await fs.mkdtemp(path.join(os.tmpdir(), SYNC.locations.temp_prefix));
+}
+
+function findUUID(text: string): string | null {
+  const matches = text.match(SYNC.patterns.uuid);
+  if (!matches) {
+    return null;
+  }
+  return matches[1];
 }
