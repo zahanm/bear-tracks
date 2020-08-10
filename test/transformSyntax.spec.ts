@@ -23,6 +23,7 @@ and ::another:: highlight.
   - some indented
 
 - others not
+- [[Note reference]] as a test
 
 + all
 + checked
@@ -33,6 +34,7 @@ and ::another:: highlight.
 * unordered
 * list
   * with nesting
+* [[And]] these
 `;
 
 const obsidian_note = `# Hello World
@@ -57,6 +59,7 @@ and ==another== highlight.
   - [ ] some indented
 
 - [ ] others not
+- [ ] [[Note reference]] as a test
 
 - [x] all
 - [x] checked
@@ -67,6 +70,7 @@ and ==another== highlight.
 - unordered
 - list
   - with nesting
+- [[And]] these
 
 <!-- {BearID:FOO-BAR-BAZ} -->
 `;

@@ -5,22 +5,22 @@ const PATTERNS = {
     highlight: /(^|\s)\:\:(\S(.*?)\S)?\:\:/gm,
     nested_tags: /\#\b([\w \-]*\/)+/gm,
     todo: {
-      unchecked: /(^[ \t]*)\-(?=\s\w)/gm,
-      checked: /(^[ \t]*)\+(?=\s\w)/gm,
+      unchecked: /(^[ \t]*)\-(?=\s+\S)/gm,
+      checked: /(^[ \t]*)\+(?=\s+\S)/gm,
     },
     list: {
-      unordered: /(^[ \t]*)\*(?=\s\w)/gm,
+      unordered: /(^[ \t]*)\*(?=\s+\S)/gm,
     },
   },
   obsidian: {
     highlight: /(^|\s)\=\=(\S(.*?)\S)?\=\=/gm,
     nested_tags: /\#\b([\w \-]*\_)+/gm,
     todo: {
-      unchecked: /(^[ \t]*)\- \[ \](?=\s\w)/gm,
-      checked: /(^[ \t]*)\- \[x\](?=\s\w)/gm,
+      unchecked: /(^[ \t]*)\- \[ \](?=\s+\S)/gm,
+      checked: /(^[ \t]*)\- \[x\](?=\s+\S)/gm,
     },
     list: {
-      unordered: /(^[ \t]*)\-(?=\s\w)/gm,
+      unordered: /(^[ \t]*)\-(?=\s+\S)(?! \[[ x]\])/gm,
     },
   },
 };
