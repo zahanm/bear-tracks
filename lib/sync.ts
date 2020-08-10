@@ -41,7 +41,6 @@ class Syncer {
     console.error("Starting sync.");
     await this.importUpdatesFromDestination();
     console.error("Import complete, now starting export.");
-    return; // TODO remove this once import is ready
     const notes = await getAllNotes(this.opts, this.db);
     console.error(`${notes.length} notes to export.`);
     await this.writeToTempFolder(notes);
