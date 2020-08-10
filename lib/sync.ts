@@ -10,7 +10,7 @@ import {
   XCommand,
 } from "./bearXCallback";
 import { BEAR_DB, SYNC } from "./constants";
-import { getAllNotes, Note } from "./getAllNotes";
+import { getAllNotes, Note, getNote } from "./getAllNotes";
 import { transformToBear, transformToObsidian } from "./transformSyntax";
 
 export async function sync(
@@ -100,14 +100,19 @@ class Syncer {
   ) {
     if (uuid != null) {
       // update existing note
-      // TODO check for sync conflict
-      await bearXCallback(this.opts, XCommand.EDIT, {
-        id: uuid,
-        mode: "replace_all",
-        text,
-        title,
-        ...DEFAULT_OPTIONS,
-      });
+      const note = await getNote(this.opts, this.db, uuid);
+      if (conflicts(note, lastExportTs)) {
+        // deal with sync conflict
+        console.error(`CONFLICT! ${title}`);
+      } else {
+        await bearXCallback(this.opts, XCommand.EDIT, {
+          id: uuid,
+          mode: "replace_all",
+          text,
+          title,
+          ...DEFAULT_OPTIONS,
+        });
+      }
     } else {
       // create a new note
       await bearApiCreateNote(this.opts, {
@@ -195,6 +200,10 @@ async function dbIsModified(destFolder: string): Promise<boolean> {
 async function getMTime(file: string) {
   const stat = await fs.stat(file);
   return stat.mtime;
+}
+
+function conflicts(note: Note, lastExportTs: Date) {
+  return note.modification_date > lastExportTs;
 }
 
 async function updateMTime(file: string, time: Date) {
