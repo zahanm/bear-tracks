@@ -2,7 +2,10 @@ import { spawnSync } from "child_process";
 import * as fs from "fs/promises";
 import * as os from "os";
 import * as path from "path";
+
 import { Database } from "sqlite";
+import * as moment from "moment";
+
 import {
   bearApiCreateNote,
   DEFAULT_OPTIONS,
@@ -102,8 +105,16 @@ class Syncer {
       // update existing note
       const note = await getNote(this.opts, this.db, uuid);
       if (conflicts(note, lastExportTs)) {
-        // deal with sync conflict
-        console.error(`CONFLICT! ${title}`);
+        console.error(`Conflict!: ${title}`);
+        // create a new note with a "Conflict!" notice appended
+        if (this.opts.debug) {
+          process.stderr.write(appendConflictNotice(text, uuid, mtime) + "\n");
+        }
+        await bearApiCreateNote(this.opts, {
+          text: appendConflictNotice(text, uuid, mtime),
+          title,
+          ...DEFAULT_OPTIONS,
+        });
       } else {
         await bearXCallback(this.opts, XCommand.EDIT, {
           id: uuid,
@@ -237,4 +248,16 @@ function findTitle(text: string, filename: string): string {
     throw new Error(`This note doesn't have a title: ${filename}`);
   }
   return matches[1];
+}
+
+function appendConflictNotice(text: string, uuid: string, mtime: Date): string {
+  const noteLink = `bear://x-callback-url/open-note?id=${uuid}`;
+  const when = moment(mtime);
+  const notice = `
+# Sync Conflict!
+
+* ::Externally updated ${when.fromNow()} at ${when.format("llll")}::
+* [Original Bear note](${noteLink})
+`;
+  return text + notice;
 }
