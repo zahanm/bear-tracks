@@ -48,4 +48,5 @@ export const SYNC = {
   locations: {
     temp_prefix: "edu.zahanm.bear-tracks.sync-",
   },
+  supported: new Set([".md"]),
 };

@@ -6,7 +6,7 @@ import { Database } from "sqlite";
 
 import { BEAR_DB, SYNC } from "./constants";
 import { getAllNotes, Note } from "./getAllNotes";
-import { transformToObsidian } from "./transformSyntax";
+import { transformToObsidian, transformToBear } from "./transformSyntax";
 import { spawnSync } from "child_process";
 
 export async function sync(
@@ -32,11 +32,9 @@ class Syncer {
 
   async run() {
     console.error("Starting sync.");
-    // TODO: sync edits back in to bear
-    console.error("Starting export.");
-    if (this.opts.debug) {
-      console.error(`Temp folder: ${this.tempFolder}`);
-    }
+    await this.importUpdatesFromDestination();
+    console.error("Import complete, now starting export.");
+    return;
     const notes = await getAllNotes(this.opts, this.db);
     console.error(`${notes.length} notes to export.`);
     await this.writeToTempFolder(notes);
@@ -44,7 +42,53 @@ class Syncer {
     console.error("Sync complete.");
   }
 
+  private async importUpdatesFromDestination() {
+    if (!(await destFolderIsPopulated(this.destFolder))) {
+      if (this.opts.debug) {
+        console.error(
+          `Destination ${this.destFolder} is not populated, skipping import.`
+        );
+      }
+      return;
+    }
+    const syncFile = path.join(this.destFolder, SYNC.files.sync);
+    const syncTs = await getMTime(syncFile);
+    const exportTs = await getMTime(
+      path.join(this.destFolder, SYNC.files.export)
+    );
+    for await (const entry of await fs.opendir(this.destFolder)) {
+      const file = path.join(this.destFolder, entry.name);
+      if (entry.isDirectory()) {
+        if (this.opts.debug) {
+          console.error(`Skip (nested folder): ${entry.name}`);
+        }
+        continue;
+      }
+      if (!SYNC.supported.has(path.extname(entry.name))) {
+        if (this.opts.debug) {
+          console.error(`Skip (unsupported file type): ${entry.name}`);
+        }
+        continue;
+      }
+      if ((await getMTime(file)) > syncTs) {
+        if (this.opts.debug) {
+          console.error(`Import: ${entry.name}`);
+        }
+        const text = await fs.readFile(file, { encoding: "utf8" });
+        const transformed = await transformToBear(this.opts, text);
+        if (this.opts.debug) {
+          process.stderr.write(transformed + "\n");
+        }
+        // TODO write to Bear.app
+      }
+    }
+    await updateMTime(syncFile, new Date());
+  }
+
   private async writeToTempFolder(notes: Note[]) {
+    if (this.opts.debug) {
+      console.error(`Temp folder: ${this.tempFolder}`);
+    }
     // Notes
     for (const note of notes) {
       const transformedText = await transformToObsidian(
@@ -104,8 +148,14 @@ class Syncer {
   }
 }
 
+async function destFolderIsPopulated(destFolder: string) {
+  const syncTs = path.join(destFolder, SYNC.files.sync);
+  const exportTs = path.join(destFolder, SYNC.files.export);
+  return (await fileExists(syncTs)) && (await fileExists(exportTs));
+}
+
 async function dbIsModified(destFolder: string): Promise<boolean> {
-  if (!(await fileExists(path.join(destFolder, SYNC.files.sync)))) {
+  if (!(await destFolderIsPopulated(destFolder))) {
     return true;
   }
   const dbModifiedTs = await getMTime(path.join(os.homedir(), BEAR_DB.path));
@@ -116,6 +166,10 @@ async function dbIsModified(destFolder: string): Promise<boolean> {
 async function getMTime(file: string) {
   const stat = await fs.stat(file);
   return stat.mtime;
+}
+
+async function updateMTime(file: string, time: Date) {
+  await fs.utimes(file, time, time);
 }
 
 async function fileExists(file: string): Promise<boolean> {

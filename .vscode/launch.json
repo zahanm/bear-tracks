@@ -7,10 +7,10 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Run bear-tracks",
+      "name": "bear-tracks sync",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/index.ts",
-      "args": ["sync", "/Users/zahanm/Documents/Bear Notes/"],
+      "args": ["--debug", "sync", "/Users/zahanm/Documents/Bear Notes/"],
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/out/**/*.js"]
     },
