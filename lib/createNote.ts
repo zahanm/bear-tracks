@@ -1,18 +1,8 @@
-import { ParsedUrlQueryInput } from "querystring";
 import * as moment from "moment";
-import { CreateNoteType } from "./constants";
-import { bearXCallback, DEFAULT_OPTIONS, XCommand } from "./bearXCallback";
+import { bearApiCreateNote, DEFAULT_OPTIONS } from "./bearXCallback";
 
 export interface Note {
   title: string;
-}
-
-interface CREATE_NOTE_OPTIONS extends ParsedUrlQueryInput {
-  show_window: string;
-  open_note: string;
-  pin?: string;
-  title: string;
-  text: string;
 }
 
 export async function createDailyNote(
@@ -57,11 +47,4 @@ export async function createWeeklyNote(
   return {
     title,
   };
-}
-
-async function bearApiCreateNote(
-  opts: Record<string, any>,
-  options: CREATE_NOTE_OPTIONS
-) {
-  await bearXCallback(opts, XCommand.CREATE, options);
 }

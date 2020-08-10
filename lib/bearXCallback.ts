@@ -1,6 +1,14 @@
 import { stringify, ParsedUrlQueryInput } from "querystring";
 import { spawnSync } from "child_process";
 
+export interface CREATE_NOTE_OPTIONS extends ParsedUrlQueryInput {
+  show_window: string;
+  open_note: string;
+  pin?: string;
+  title?: string;
+  text: string;
+}
+
 export const DEFAULT_OPTIONS = {
   show_window: "no",
   open_note: "no",
@@ -9,6 +17,13 @@ export const DEFAULT_OPTIONS = {
 export enum XCommand {
   CREATE,
   EDIT,
+}
+
+export async function bearApiCreateNote(
+  opts: Record<string, any>,
+  options: CREATE_NOTE_OPTIONS
+) {
+  await bearXCallback(opts, XCommand.CREATE, options);
 }
 
 /**

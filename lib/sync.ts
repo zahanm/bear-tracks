@@ -1,13 +1,17 @@
-import * as path from "path";
+import { spawnSync } from "child_process";
 import * as fs from "fs/promises";
 import * as os from "os";
-
+import * as path from "path";
 import { Database } from "sqlite";
-
+import {
+  bearApiCreateNote,
+  DEFAULT_OPTIONS,
+  bearXCallback,
+  XCommand,
+} from "./bearXCallback";
 import { BEAR_DB, SYNC } from "./constants";
 import { getAllNotes, Note } from "./getAllNotes";
-import { transformToObsidian, transformToBear } from "./transformSyntax";
-import { spawnSync } from "child_process";
+import { transformToBear, transformToObsidian } from "./transformSyntax";
 
 export async function sync(
   opts: Record<string, any>,
@@ -34,7 +38,7 @@ class Syncer {
     console.error("Starting sync.");
     await this.importUpdatesFromDestination();
     console.error("Import complete, now starting export.");
-    return;
+    return; // TODO remove this once import is ready
     const notes = await getAllNotes(this.opts, this.db);
     console.error(`${notes.length} notes to export.`);
     await this.writeToTempFolder(notes);
@@ -76,22 +80,41 @@ class Syncer {
           console.error(`Import: ${entry.name}`);
         }
         const text = await fs.readFile(file, { encoding: "utf8" });
+        const uuid = findUUID(text);
         const transformed = await transformToBear(this.opts, text);
         if (this.opts.debug) {
           process.stderr.write(transformed + "\n");
         }
-        await this.updateNoteInBear(transformed, fileTs, exportTs);
+        await this.updateNoteInBear(uuid, transformed, fileTs, exportTs);
       }
     }
-    await updateMTime(syncFile, new Date());
+    // TODO put this back in once I'm done working on sync
+    // await updateMTime(syncFile, new Date());
   }
 
   private async updateNoteInBear(
+    uuid: string | null,
     text: string,
     mtime: Date,
     lastExportTs: Date
   ) {
-    const uuid = findUUID(text);
+    if (uuid != null) {
+      // update existing note
+      // TODO - give a title, otherwise Bear duplicates it
+      // TODO check for sync conflict
+      await bearXCallback(this.opts, XCommand.EDIT, {
+        id: uuid,
+        mode: "replace",
+        text,
+        ...DEFAULT_OPTIONS,
+      });
+    } else {
+      // create a new note
+      await bearApiCreateNote(this.opts, {
+        text,
+        ...DEFAULT_OPTIONS,
+      });
+    }
   }
 
   private async writeToTempFolder(notes: Note[]) {
