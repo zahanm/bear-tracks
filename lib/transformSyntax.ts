@@ -5,16 +5,16 @@ const PATTERNS = {
     highlight: /(^|\s)\:\:(\S(.*?)\S)?\:\:/gm,
     nested_tags: /\#\b([\w \-]*\/)+/gm,
     todo: {
-      unchecked: /(^\s*)\-(?=\s\w)/gm,
-      checked: /(^\s*)\+(?=\s\w)/gm,
+      unchecked: /(^[ \t]*)\-(?=\s\w)/gm,
+      checked: /(^[ \t]*)\+(?=\s\w)/gm,
     },
   },
   obsidian: {
     highlight: /(^|\s)\=\=(\S(.*?)\S)?\=\=/gm,
     nested_tags: /\#\b([\w \-]*\_)+/gm,
     todo: {
-      unchecked: /(^\s*)\- \[ \](?=\s\w)/gm,
-      checked: /(^\s*)\- \[x\](?=\s\w)/gm,
+      unchecked: /(^[ \t]*)\- \[ \](?=\s\w)/gm,
+      checked: /(^[ \t]*)\- \[x\](?=\s\w)/gm,
     },
   },
 };

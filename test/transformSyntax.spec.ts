@@ -21,6 +21,7 @@ and ::another:: highlight.
 + some checked
 - some not
   - some indented
+
 - others not
 
 + all
@@ -50,6 +51,7 @@ and ==another== highlight.
 - [x] some checked
 - [ ] some not
   - [ ] some indented
+
 - [ ] others not
 
 - [x] all
