@@ -89,8 +89,7 @@ class Syncer {
         await this.updateNoteInBear(uuid, transformed, title, fileTs, exportTs);
       }
     }
-    // TODO put this back in once I'm done working on sync
-    // await updateMTime(syncFile, new Date());
+    await updateMTime(syncFile, new Date());
   }
 
   private async updateNoteInBear(
