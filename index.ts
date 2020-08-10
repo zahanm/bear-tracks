@@ -150,11 +150,14 @@ async function main() {
 
     /**
      * Sync Bear.app <> local folder
+     * Imports any modified notes from the local folder.
      * Writes out all the notes with the Obsidian.app syntax transformations.
      */
     program
       .command("sync <destination-folder>")
-      .description("Transform syntax to/from Bear.app <> Obsidian.app")
+      .description(
+        "Sync Bear.app notes to an external folder. Import, then export."
+      )
       .action(async function (dest: string) {
         const stat = await fs.stat(dest);
         if (!stat.isDirectory()) {
