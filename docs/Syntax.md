@@ -33,3 +33,17 @@ turns into
 - [ ] To do
 - [x] And done
 ```
+
+## Lists
+
+```
+* Unordered
+* Lists
+```
+
+turns into
+
+```
+- Unordered
+- Lists
+```

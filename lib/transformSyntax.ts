@@ -8,6 +8,9 @@ const PATTERNS = {
       unchecked: /(^[ \t]*)\-(?=\s\w)/gm,
       checked: /(^[ \t]*)\+(?=\s\w)/gm,
     },
+    list: {
+      unordered: /(^[ \t]*)\*(?=\s\w)/gm,
+    },
   },
   obsidian: {
     highlight: /(^|\s)\=\=(\S(.*?)\S)?\=\=/gm,
@@ -15,6 +18,9 @@ const PATTERNS = {
     todo: {
       unchecked: /(^[ \t]*)\- \[ \](?=\s\w)/gm,
       checked: /(^[ \t]*)\- \[x\](?=\s\w)/gm,
+    },
+    list: {
+      unordered: /(^[ \t]*)\-(?=\s\w)/gm,
     },
   },
 };
@@ -30,7 +36,8 @@ export async function transformToObsidian(
       return match.replace(/\//g, "_");
     })
     .replace(PATTERNS.bear.todo.unchecked, "$1- [ ]")
-    .replace(PATTERNS.bear.todo.checked, "$1- [x]");
+    .replace(PATTERNS.bear.todo.checked, "$1- [x]")
+    .replace(PATTERNS.bear.list.unordered, "$1-");
   if (uuid) {
     return appendUUID(text, uuid);
   } else {
@@ -47,6 +54,7 @@ export async function transformToBear(
     .replace(PATTERNS.obsidian.nested_tags, (match: string) => {
       return match.replace(/\_/g, "/");
     })
+    .replace(PATTERNS.obsidian.list.unordered, "$1*") // must run before todo.unchecked
     .replace(PATTERNS.obsidian.todo.unchecked, "$1-")
     .replace(PATTERNS.obsidian.todo.checked, "$1+")
     .replace(SYNC.patterns.uuid, "");

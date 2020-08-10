@@ -29,6 +29,10 @@ and ::another:: highlight.
 
 - all
 - unchecked
+
+* unordered
+* list
+  * with nesting
 `;
 
 const obsidian_note = `# Hello World
@@ -59,6 +63,10 @@ and ==another== highlight.
 
 - [ ] all
 - [ ] unchecked
+
+- unordered
+- list
+  - with nesting
 
 <!-- {BearID:FOO-BAR-BAZ} -->
 `;
