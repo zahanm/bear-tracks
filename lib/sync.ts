@@ -232,7 +232,9 @@ class Syncer {
     if (this.opts.debug) {
       console.error(`Writing log to ${logFile}`);
     }
-    await fs.appendFile(logFile, this.log);
+    // trim null bytes from the rest of the buffer
+    const contents = this.log.slice(0, this.log.indexOf("\u0000"));
+    await fs.appendFile(logFile, contents);
   }
 }
 
