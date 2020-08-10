@@ -186,10 +186,12 @@ class Syncer {
     for (const entry of SYNC.preserved) {
       const from = path.join(this.destFolder, entry);
       const to = path.join(this.tempFolder, entry);
-      if (this.opts.debug) {
-        console.error(`cp -R ${from} ${to}`);
+      if (await fileExists(from)) {
+        if (this.opts.debug) {
+          console.error(`cp -R ${from} ${to}`);
+        }
+        await ncp(from, to);
       }
-      await ncp(from, to);
     }
   }
 
