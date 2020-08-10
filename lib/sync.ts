@@ -34,7 +34,7 @@ export async function sync(
 }
 
 class Syncer {
-  readonly log = Buffer.alloc(256);
+  private log = "";
 
   constructor(
     readonly opts: Record<string, any>,
@@ -226,7 +226,7 @@ class Syncer {
   }
 
   private writeToLog(line: string) {
-    this.log.write(`${moment().format()}: ${line}\n`);
+    this.log += `${moment().format()}: ${line}\n`;
   }
 
   private async writeLogToFile() {
@@ -234,9 +234,7 @@ class Syncer {
     if (this.opts.debug) {
       console.error(`Writing log to ${logFile}`);
     }
-    // trim null bytes from the rest of the buffer
-    const contents = this.log.slice(0, this.log.indexOf("\u0000"));
-    await fs.appendFile(logFile, contents);
+    await fs.appendFile(logFile, this.log);
   }
 }
 
