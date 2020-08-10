@@ -34,6 +34,8 @@ export async function sync(
 }
 
 class Syncer {
+  readonly log = Buffer.alloc(256);
+
   constructor(
     readonly opts: Record<string, any>,
     readonly db: Database,
@@ -51,15 +53,16 @@ class Syncer {
     await this.preserveExternalData();
     await this.rsyncTempToDestination();
     console.error("Sync complete.");
+    await this.writeLogToFile();
   }
 
   private async importUpdatesFromDestination() {
     if (!(await destFolderIsPopulated(this.destFolder))) {
+      const message = `Destination ${this.destFolder} is not populated, skipping import.`;
       if (this.opts.debug) {
-        console.error(
-          `Destination ${this.destFolder} is not populated, skipping import.`
-        );
+        console.error(message);
       }
+      this.writeToLog(message);
       return;
     }
     const syncFile = path.join(this.destFolder, SYNC.files.sync);
@@ -67,6 +70,7 @@ class Syncer {
     const exportTs = await getMTime(
       path.join(this.destFolder, SYNC.files.export)
     );
+    let numImported = 0;
     for await (const entry of await fs.opendir(this.destFolder)) {
       const file = path.join(this.destFolder, entry.name);
       if (entry.isDirectory()) {
@@ -92,9 +96,11 @@ class Syncer {
           process.stderr.write(transformed + "\n");
         }
         await this.updateNoteInBear(uuid, transformed, title, fileTs, exportTs);
+        numImported++;
       }
     }
     await updateMTime(syncFile, new Date());
+    this.writeToLog(`${numImported} notes imported.`);
   }
 
   private async updateNoteInBear(
@@ -163,6 +169,7 @@ class Syncer {
     if (this.opts.debug) {
       console.error(`Written notes to temp folder`);
     }
+    this.writeToLog(`${notes.length} notes exported.`);
   }
 
   /**
@@ -211,6 +218,18 @@ class Syncer {
     if (error) {
       throw error;
     }
+  }
+
+  private writeToLog(line: string) {
+    this.log.write(`${moment().format()}: ${line}\n`);
+  }
+
+  private async writeLogToFile() {
+    const logFile = path.join(this.destFolder, SYNC.files.log);
+    if (this.opts.debug) {
+      console.error(`Writing log to ${logFile}`);
+    }
+    await fs.appendFile(logFile, this.log);
   }
 }
 

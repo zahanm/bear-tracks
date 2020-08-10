@@ -44,12 +44,13 @@ export const SYNC = {
   files: {
     sync: ".sync-time.log",
     export: ".export-time.log",
+    log: "bear-tracks-sync.log",
   },
   locations: {
     temp_prefix: "edu.zahanm.bear-tracks.sync-",
   },
   supported: new Set([".md"]),
-  preserved: [".obsidian"],
+  preserved: [".obsidian", "bear-tracks-sync.log"],
   patterns: {
     uuid: /\n<!-- {BearID:([\w\-]+)} -->\n/,
     title: /^#\s+(.+)\n/,
