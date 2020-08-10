@@ -114,7 +114,8 @@ class Syncer {
       // update existing note
       const note = await getNote(this.opts, this.db, uuid);
       if (conflicts(note, lastExportTs)) {
-        console.error(`Conflict!: ${title}`);
+        console.error(`Conflict: ${title}`);
+        this.writeToLog(`Conflict: ${title}`);
         // create a new note with a "Conflict!" notice appended
         if (this.opts.debug) {
           process.stderr.write(appendConflictNotice(text, uuid, mtime) + "\n");
@@ -125,6 +126,7 @@ class Syncer {
           ...DEFAULT_OPTIONS,
         });
       } else {
+        this.writeToLog(`Update: ${title}`);
         await bearXCallback(this.opts, XCommand.EDIT, {
           id: uuid,
           mode: "replace_all",
@@ -135,6 +137,7 @@ class Syncer {
       }
     } else {
       // create a new note
+      this.writeToLog(`Create: ${title}`);
       await bearApiCreateNote(this.opts, {
         text,
         title,
