@@ -21,7 +21,9 @@ export async function findDuplicateNotes(
   const duplicateFilenames = new Set(
     duplicateFilenameCounts.map((count) => count.value)
   );
-  return notes.filter((note) => duplicateFilenames.has(note.filename));
+  return notes.filter((note) =>
+    duplicateFilenames.has(note.filename.toLowerCase())
+  );
 }
 
 export async function findDuplicateNoteCounts(
@@ -29,7 +31,7 @@ export async function findDuplicateNoteCounts(
   db: Database
 ): Promise<TitleCount[]> {
   const notes = await getAllNotes(opts, db);
-  const filenames = notes.map((note) => note.filename);
+  const filenames = notes.map((note) => note.filename.toLowerCase());
   return duplicateCounts(notes)
     .map((val) => {
       const filename = val.value,
@@ -49,7 +51,9 @@ export async function findDuplicateNoteCounts(
  * Check for duplicates by filename
  */
 function duplicateCounts(notes: Note[]): Count[] {
-  return countValues(notes.map((note) => note.filename)).filter((val) => {
+  return countValues(
+    notes.map((note) => note.filename).map((name) => name.toLowerCase())
+  ).filter((val) => {
     return val.count > 1;
   });
 }
