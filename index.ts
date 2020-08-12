@@ -7,7 +7,7 @@ import { open } from "sqlite";
 import { program } from "commander";
 import * as columnify from "columnify";
 
-import { BEAR_DB, CreateNoteType } from "./lib/constants";
+import { BEAR_DB, AgentType } from "./lib/constants";
 import { findDuplicateNoteCounts } from "./lib/findDuplicates";
 import { invalidFilenames, invalidLinks } from "./lib/invalids";
 import { createDailyNote, createWeeklyNote } from "./lib/createNote";
@@ -80,6 +80,7 @@ async function main() {
         console.log(titles.join("\n"));
       });
 
+    type CreateNoteType = "daily" | "weekly";
     /**
      * @returns the created note title
      */
@@ -106,12 +107,17 @@ async function main() {
      */
     program
       .command("install-agent <note-type>")
-      .description("Set up the launch-agent for a particular note type")
-      .action(async function (ntype: CreateNoteType) {
-        if (!(ntype in ["daily", "weekly"])) {
-          throw new Error(`Invalid note-type: ${ntype}`);
+      .description("Set up the launch-agent for a periodic job")
+      .action(async function (agentType: AgentType) {
+        switch (agentType) {
+          case "daily":
+          case "weekly":
+          case "sync":
+            await installAgent(program.opts(), agentType);
+            break;
+          default:
+            throw new Error(`Invalid agent-type: ${agentType}`);
         }
-        await installAgent(program.opts(), ntype);
       });
 
     /**

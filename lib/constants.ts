@@ -27,9 +27,9 @@ export const LINK_PATTERNS = {
   invalid: /[\|]/,
 };
 
-export type CreateNoteType = "daily" | "weekly";
+export type AgentType = "daily" | "weekly" | "sync";
 
-export const AGENT: Record<CreateNoteType, Record<string, string>> = {
+export const AGENT: Record<AgentType, Record<string, string>> = {
   daily: {
     agentname: "edu.zahanm.bear-tracks.daily.plist",
     filename: "daily.plist",
@@ -37,6 +37,10 @@ export const AGENT: Record<CreateNoteType, Record<string, string>> = {
   weekly: {
     agentname: "edu.zahanm.bear-tracks.weekly.plist",
     filename: "weekly.plist",
+  },
+  sync: {
+    agentname: "edu.zahanm.bear-tracks.sync.plist",
+    filename: "sync.plist",
   },
 };
 

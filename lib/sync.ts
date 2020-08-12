@@ -99,8 +99,9 @@ class Syncer {
     }
     await updateMTime(syncFile, new Date());
     const waitSec = 3;
-    this.writeToLog(
-      `${numImported} notes imported.\nWaiting ${waitSec} sec for Bear.app to process the imports...`
+    this.writeToLog(`${numImported} notes imported.`);
+    console.error(
+      `Waiting ${waitSec} sec for Bear.app to process the imports...`
     );
     await sleep(waitSec * 1000);
   }
