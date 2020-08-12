@@ -14,7 +14,7 @@ import {
   bearXCallback,
   XCommand,
 } from "./bearXCallback";
-import { BEAR_DB, SYNC } from "./constants";
+import { BEAR_DB, SYNC, LOGS } from "./constants";
 import { getAllNotes, Note, getNote } from "./getAllNotes";
 import { transformToBear, transformToObsidian } from "./transformSyntax";
 import { sleep, fileExists } from "./utils";
@@ -236,7 +236,7 @@ class Syncer {
   }
 
   private async writeLogToFile() {
-    const logFile = path.join(this.destFolder, SYNC.files.log);
+    const logFile = path.join(LOGS.folder, LOGS.file);
     if (this.opts.debug) {
       console.error(`Writing log to ${logFile}`);
     }
