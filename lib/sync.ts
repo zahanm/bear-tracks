@@ -17,6 +17,7 @@ import {
 import { BEAR_DB, SYNC } from "./constants";
 import { getAllNotes, Note, getNote } from "./getAllNotes";
 import { transformToBear, transformToObsidian } from "./transformSyntax";
+import { sleep } from "./utils";
 
 const ncp = promisify(ncpCallback);
 
@@ -97,7 +98,11 @@ class Syncer {
       }
     }
     await updateMTime(syncFile, new Date());
-    this.writeToLog(`${numImported} notes imported.`);
+    const waitSec = 3;
+    this.writeToLog(
+      `${numImported} notes imported.\nWaiting ${waitSec} sec for Bear.app to process the imports...`
+    );
+    await sleep(waitSec * 1000);
   }
 
   private async updateNoteInBear(
@@ -111,8 +116,8 @@ class Syncer {
       // update existing note
       const note = await getNote(this.opts, this.db, uuid);
       if (conflicts(note, lastExportTs)) {
-        console.error(`Conflict: ${title}`);
-        this.writeToLog(`Conflict: ${title}`);
+        console.error(`*Conflict*: ${title}`);
+        this.writeToLog(`*Conflict*: ${title}`);
         // create a new note with a "Conflict!" notice appended
         const textWithConflict = addConflictNotice(text, uuid, mtime);
         if (this.opts.debug) {
