@@ -53,6 +53,6 @@ export const SYNC = {
   preserved: [".obsidian", "bear-tracks-sync.log", "obsidian.css"],
   patterns: {
     uuid: /\n<!-- {BearID:([\w\-]+)} -->\n/,
-    title: /^#\s+(.+)\n/,
+    title: /^(#\s+)(.+)/,
   },
 };

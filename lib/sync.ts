@@ -114,7 +114,7 @@ class Syncer {
         console.error(`Conflict: ${title}`);
         this.writeToLog(`Conflict: ${title}`);
         // create a new note with a "Conflict!" notice appended
-        const textWithConflict = appendConflictNotice(text, uuid, mtime);
+        const textWithConflict = addConflictNotice(text, uuid, mtime);
         if (this.opts.debug) {
           process.stderr.write(textWithConflict + "\n");
         }
@@ -289,21 +289,29 @@ function findUUID(text: string): string | null {
 }
 
 function findTitle(text: string, filename: string): string {
-  const matches = text.match(SYNC.patterns.title);
+  const lines = text.split("\n", 1);
+  if (lines.length === 0) {
+    throw new Error(`Empty note: ${filename}`);
+  }
+  const matches = lines[0].match(SYNC.patterns.title);
   if (!matches) {
     throw new Error(`This note doesn't have a title: ${filename}`);
   }
-  return matches[1];
+  return matches[2];
 }
 
-function appendConflictNotice(text: string, uuid: string, mtime: Date): string {
+function addConflictNotice(text: string, uuid: string, mtime: Date): string {
   const noteLink = `bear://x-callback-url/open-note?id=${uuid}`;
   const when = moment(mtime);
+  const lines = text.split("\n");
+  const newTitle = lines[0].replace(SYNC.patterns.title, "$1=Conflict!= $2");
+  lines.splice(0, 1, newTitle); // replace the title
+  const textWithNewTitle = lines.join("\n");
   const notice = `
-# Sync Conflict!
 
+# Sync Conflict!
 * ::Externally updated ${when.fromNow()} at ${when.format("llll")}::
 * [Original Bear note](${noteLink})
 `;
-  return text + notice;
+  return textWithNewTitle + notice;
 }
