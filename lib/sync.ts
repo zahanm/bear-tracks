@@ -17,7 +17,7 @@ import {
 import { BEAR_DB, SYNC } from "./constants";
 import { getAllNotes, Note, getNote } from "./getAllNotes";
 import { transformToBear, transformToObsidian } from "./transformSyntax";
-import { sleep } from "./utils";
+import { sleep, fileExists } from "./utils";
 
 const ncp = promisify(ncpCallback);
 
@@ -270,15 +270,6 @@ function conflicts(note: Note, lastExportTs: Date) {
 
 async function updateMTime(file: string, time: Date) {
   await fs.utimes(file, time, time);
-}
-
-async function fileExists(file: string): Promise<boolean> {
-  try {
-    await fs.access(file);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 async function createTempFolder() {

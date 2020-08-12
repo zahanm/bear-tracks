@@ -16,6 +16,7 @@ import { deduplicateNotes } from "./lib/deduplicateNotes";
 import missingTitles from "./lib/missingTitles";
 import { transformToObsidian, transformToBear } from "./lib/transformSyntax";
 import { sync } from "./lib/sync";
+import { setupLogs } from "./lib/setupLogs";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
@@ -164,6 +165,17 @@ async function main() {
           throw new Error(`Must provide valid folder: ${dest}`);
         }
         await sync(program.opts(), db, dest);
+      });
+
+    /**
+     * Sets up config for logrotate, and puts the log file in place.
+     * It's assumed that this is installed with homebrew.
+     */
+    program
+      .command("setup-logs")
+      .description("Configures logrotate, and puts the logfile in place.")
+      .action(async function () {
+        await setupLogs(program.opts());
       });
 
     await program.parseAsync();

@@ -56,3 +56,12 @@ export const SYNC = {
     title: /^(#\s+)(.+)/,
   },
 };
+
+export const LOGS = {
+  folder: "/usr/local/var/log/",
+  file: "edu.zahanm.bear-tracks.log",
+  logrotate: {
+    conf: "/usr/local/etc/logrotate.d/edu.zahanm.bear-tracks.conf",
+    file: "logrotate.conf",
+  },
+};
