@@ -122,7 +122,6 @@ class Syncer {
         }
         await bearApiCreateNote(this.opts, {
           text: appendConflictNotice(text, uuid, mtime),
-          title,
           ...DEFAULT_OPTIONS,
         });
       } else {
@@ -131,7 +130,6 @@ class Syncer {
           id: uuid,
           mode: "replace_all",
           text,
-          title,
           ...DEFAULT_OPTIONS,
         });
       }
@@ -140,7 +138,6 @@ class Syncer {
       this.writeToLog(`Create: ${title}`);
       await bearApiCreateNote(this.opts, {
         text,
-        title,
         ...DEFAULT_OPTIONS,
       });
     }
