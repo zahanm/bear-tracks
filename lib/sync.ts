@@ -92,9 +92,6 @@ class Syncer {
         const uuid = findUUID(text);
         const title = findTitle(text, entry.name);
         const transformed = await transformToBear(this.opts, text);
-        if (this.opts.debug) {
-          process.stderr.write(transformed + "\n");
-        }
         await this.updateNoteInBear(uuid, transformed, title, fileTs, exportTs);
         numImported++;
       }
@@ -117,15 +114,19 @@ class Syncer {
         console.error(`Conflict: ${title}`);
         this.writeToLog(`Conflict: ${title}`);
         // create a new note with a "Conflict!" notice appended
+        const textWithConflict = appendConflictNotice(text, uuid, mtime);
         if (this.opts.debug) {
-          process.stderr.write(appendConflictNotice(text, uuid, mtime) + "\n");
+          process.stderr.write(textWithConflict + "\n");
         }
         await bearApiCreateNote(this.opts, {
-          text: appendConflictNotice(text, uuid, mtime),
+          text: textWithConflict,
           ...DEFAULT_OPTIONS,
         });
       } else {
         this.writeToLog(`Update: ${title}`);
+        if (this.opts.debug) {
+          process.stderr.write(text + "\n");
+        }
         await bearXCallback(this.opts, XCommand.EDIT, {
           id: uuid,
           mode: "replace_all",
@@ -136,6 +137,9 @@ class Syncer {
     } else {
       // create a new note
       this.writeToLog(`Create: ${title}`);
+      if (this.opts.debug) {
+        process.stderr.write(text + "\n");
+      }
       await bearApiCreateNote(this.opts, {
         text,
         ...DEFAULT_OPTIONS,
