@@ -26,10 +26,6 @@ export async function sync(
   db: Database,
   destFolder: string
 ) {
-  if (!(await dbIsModified(destFolder))) {
-    console.error("No sync needed.");
-    return;
-  }
   const syncer = new Syncer(opts, db, destFolder, await createTempFolder());
   await syncer.run();
 }
@@ -48,11 +44,7 @@ class Syncer {
     console.error("Starting sync.");
     await this.importUpdatesFromDestination();
     console.error("Import complete, now starting export.");
-    const notes = await getAllNotes(this.opts, this.db);
-    console.error(`${notes.length} notes to export.`);
-    await this.writeToTempFolder(notes);
-    await this.preserveExternalData();
-    await this.rsyncTempToDestination();
+    await this.exportToDestination();
     console.error("Sync complete.");
     await this.writeLogToFile();
   }
@@ -60,9 +52,7 @@ class Syncer {
   private async importUpdatesFromDestination() {
     if (!(await destFolderIsPopulated(this.destFolder))) {
       const message = `Destination ${this.destFolder} is not populated, skipping import.`;
-      if (this.opts.debug) {
-        console.error(message);
-      }
+      console.error(message);
       this.writeToLog(message);
       return;
     }
@@ -151,6 +141,21 @@ class Syncer {
         ...DEFAULT_OPTIONS,
       });
     }
+  }
+
+  private async exportToDestination() {
+    if (!(await dbIsModified(this.destFolder))) {
+      console.error(
+        "No export needed, Bear.app data is older than last export."
+      );
+      this.writeToLog("No export needed.");
+      return;
+    }
+    const notes = await getAllNotes(this.opts, this.db);
+    console.error(`${notes.length} notes to export.`);
+    await this.writeToTempFolder(notes);
+    await this.preserveExternalData();
+    await this.rsyncTempToDestination();
   }
 
   private async writeToTempFolder(notes: Note[]) {
