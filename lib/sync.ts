@@ -51,9 +51,9 @@ class Syncer {
 
   private async importUpdatesFromDestination() {
     if (!(await destFolderIsPopulated(this.destFolder))) {
-      const message = `Destination ${this.destFolder} is not populated, skipping import.`;
-      console.error(message);
-      this.writeToLog(message);
+      this.writeToLog(
+        `Destination ${this.destFolder} is not populated, skipping import.`
+      );
       return;
     }
     const importFile = path.join(this.destFolder, SYNC.files.import);
@@ -108,7 +108,6 @@ class Syncer {
       // update existing note
       const note = await getNote(this.opts, this.db, uuid);
       if (conflicts(note, lastExportTs)) {
-        console.error(`*Conflict*: ${title}`);
         this.writeToLog(`*Conflict*: ${title}`);
         // create a new note with a "Conflict!" notice appended
         const textWithConflict = addConflictNotice(text, uuid, mtime);
@@ -146,10 +145,9 @@ class Syncer {
 
   private async exportToDestination() {
     if (await exportIsNewerThanDb(this.destFolder)) {
-      console.error(
+      this.writeToLog(
         "No export needed, Bear.app notes haven't changed since last export."
       );
-      this.writeToLog("No export needed.");
       return;
     }
     const notes = await getAllNotes(this.opts, this.db);
@@ -235,6 +233,7 @@ class Syncer {
   }
 
   private writeToLog(line: string) {
+    console.error(line);
     this.log += `${moment().format()}: ${line}\n`;
   }
 
@@ -248,9 +247,9 @@ class Syncer {
 }
 
 async function destFolderIsPopulated(destFolder: string) {
-  const syncTs = path.join(destFolder, SYNC.files.import);
+  const importTs = path.join(destFolder, SYNC.files.import);
   const exportTs = path.join(destFolder, SYNC.files.export);
-  return (await fileExists(syncTs)) && (await fileExists(exportTs));
+  return (await fileExists(importTs)) && (await fileExists(exportTs));
 }
 
 async function exportIsNewerThanDb(destFolder: string): Promise<boolean> {
