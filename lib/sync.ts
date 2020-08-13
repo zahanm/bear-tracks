@@ -144,9 +144,9 @@ class Syncer {
   }
 
   private async exportToDestination() {
-    if (!(await dbIsModified(this.destFolder))) {
+    if (await exportIsNewerThanDb(this.destFolder)) {
       console.error(
-        "No export needed, Bear.app data is older than last export."
+        "No export needed, Bear.app notes haven't changed since last export."
       );
       this.writeToLog("No export needed.");
       return;
@@ -256,13 +256,13 @@ async function destFolderIsPopulated(destFolder: string) {
   return (await fileExists(syncTs)) && (await fileExists(exportTs));
 }
 
-async function dbIsModified(destFolder: string): Promise<boolean> {
+async function exportIsNewerThanDb(destFolder: string): Promise<boolean> {
   if (!(await destFolderIsPopulated(destFolder))) {
-    return true;
+    return false;
   }
   const dbModifiedTs = await getMTime(path.join(os.homedir(), BEAR_DB.path));
   const lastExportTs = await getMTime(path.join(destFolder, SYNC.files.export));
-  return dbModifiedTs > lastExportTs;
+  return lastExportTs > dbModifiedTs;
 }
 
 async function getMTime(file: string) {
