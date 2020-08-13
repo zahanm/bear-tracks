@@ -46,7 +46,7 @@ export const AGENT: Record<AgentType, Record<string, string>> = {
 
 export const SYNC = {
   files: {
-    sync: ".sync-time.log",
+    import: ".sync-time.log",
     export: ".export-time.log",
   },
   locations: {

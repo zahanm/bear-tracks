@@ -56,8 +56,8 @@ class Syncer {
       this.writeToLog(message);
       return;
     }
-    const syncFile = path.join(this.destFolder, SYNC.files.sync);
-    const syncTs = await getMTime(syncFile);
+    const importFile = path.join(this.destFolder, SYNC.files.import);
+    const importTs = await getMTime(importFile);
     const exportTs = await getMTime(
       path.join(this.destFolder, SYNC.files.export)
     );
@@ -77,7 +77,7 @@ class Syncer {
         continue;
       }
       const fileTs = await getMTime(file);
-      if (fileTs > syncTs) {
+      if (fileTs > importTs) {
         console.error(`Import: ${entry.name}`);
         const text = await fs.readFile(file, { encoding: "utf8" });
         const uuid = findUUID(text);
@@ -87,7 +87,8 @@ class Syncer {
         numImported++;
       }
     }
-    await updateMTime(syncFile, new Date());
+    // Sync metadata file for the "mtime"
+    await fs.writeFile(path.join(this.tempFolder, SYNC.files.import), "Import");
     const waitSec = 3;
     this.writeToLog(`${numImported} notes imported.`);
     console.error(
@@ -175,12 +176,8 @@ class Syncer {
       process.stderr.write("x");
     }
     process.stderr.write("\n");
-    // sync metadata files
-    await fs.writeFile(
-      path.join(this.tempFolder, SYNC.files.export),
-      "Exported"
-    );
-    await fs.writeFile(path.join(this.tempFolder, SYNC.files.sync), "Synced");
+    // sync metadata file, only the "mtime" is valuable
+    await fs.writeFile(path.join(this.tempFolder, SYNC.files.export), "Export");
     if (this.opts.debug) {
       console.error(`Written notes to temp folder`);
     }
@@ -251,7 +248,7 @@ class Syncer {
 }
 
 async function destFolderIsPopulated(destFolder: string) {
-  const syncTs = path.join(destFolder, SYNC.files.sync);
+  const syncTs = path.join(destFolder, SYNC.files.import);
   const exportTs = path.join(destFolder, SYNC.files.export);
   return (await fileExists(syncTs)) && (await fileExists(exportTs));
 }
@@ -272,10 +269,6 @@ async function getMTime(file: string) {
 
 function conflicts(note: Note, lastExportTs: Date) {
   return note.modification_date > lastExportTs;
-}
-
-async function updateMTime(file: string, time: Date) {
-  await fs.utimes(file, time, time);
 }
 
 async function createTempFolder() {
