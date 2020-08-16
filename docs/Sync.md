@@ -1,5 +1,12 @@
 # Sync FAQs
 
+## Caveats
+
+This exports all your (not in trash, not archived) Bear.app notes to a folder in Markdown format.
+
+- It doesn't attempt to bring images with it.
+- There is no folder hierarchy imposed. Notes with duplicate names will be overwritten.
+
 ## Title
 
 I expect that your note starts with
