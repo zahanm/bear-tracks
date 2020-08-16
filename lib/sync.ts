@@ -94,12 +94,14 @@ class Syncer {
     }
     // Sync metadata file for the "mtime"
     await fs.writeFile(path.join(this.tempFolder, SYNC.files.import), "Import");
-    const waitSec = 3;
     this.writeToLog(`${numImported} notes imported.`);
-    this.printOnTerminal(
-      `Waiting ${waitSec} sec for Bear.app to process the imports...`
-    );
-    await sleep(waitSec * 1000);
+    if (numImported > 0) {
+      const waitSec = 3;
+      this.printOnTerminal(
+        `Waiting ${waitSec} sec for Bear.app to process the imports...`
+      );
+      await sleep(waitSec * 1000);
+    }
   }
 
   private async updateNoteInBear(
