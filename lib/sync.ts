@@ -14,10 +14,11 @@ import {
   bearXCallback,
   XCommand,
 } from "./bearXCallback";
-import { BEAR_DB, SYNC, LOGS } from "./constants";
+import { BEAR_DB, SYNC } from "./constants";
 import { getAllNotes, Note, getNote } from "./getAllNotes";
 import { transformToBear, transformToObsidian } from "./transformSyntax";
 import { sleep, fileExists } from "./utils";
+import { Logger } from "./Logger";
 
 const ncp = promisify(ncpCallback);
 
@@ -31,22 +32,27 @@ export async function sync(
 }
 
 class Syncer {
-  private log = "";
+  private logger: Logger;
 
   constructor(
     readonly opts: Record<string, any>,
     readonly db: Database,
     readonly destFolder: string,
     readonly tempFolder: string
-  ) {}
+  ) {
+    this.logger = new Logger(opts.cron);
+  }
 
   async run() {
-    console.error("Starting sync.");
-    await this.importUpdatesFromDestination();
-    console.error("Import complete, now starting export.");
-    await this.exportToDestination();
-    console.error("Sync complete.");
-    await this.writeLogToFile();
+    try {
+      this.printOnTerminal("Starting sync.");
+      await this.importUpdatesFromDestination();
+      this.printOnTerminal("Import complete, now starting export.");
+      await this.exportToDestination();
+      this.printOnTerminal("Sync complete.");
+    } finally {
+      this.logger.close();
+    }
   }
 
   private async importUpdatesFromDestination() {
@@ -66,19 +72,18 @@ class Syncer {
       const file = path.join(this.destFolder, entry.name);
       if (entry.isDirectory()) {
         if (this.opts.debug) {
-          console.error(`Skip (nested folder): ${entry.name}`);
+          this.printOnTerminal(`Skip (nested folder): ${entry.name}`);
         }
         continue;
       }
       if (!SYNC.supported.has(path.extname(entry.name))) {
         if (this.opts.debug) {
-          console.error(`Skip (unsupported file type): ${entry.name}`);
+          this.printOnTerminal(`Skip (unsupported file type): ${entry.name}`);
         }
         continue;
       }
       const fileTs = await getMTime(file);
       if (fileTs > importTs) {
-        console.error(`Import: ${entry.name}`);
         const text = await fs.readFile(file, { encoding: "utf8" });
         const uuid = findUUID(text);
         const title = findTitle(text, entry.name);
@@ -91,7 +96,7 @@ class Syncer {
     await fs.writeFile(path.join(this.tempFolder, SYNC.files.import), "Import");
     const waitSec = 3;
     this.writeToLog(`${numImported} notes imported.`);
-    console.error(
+    this.printOnTerminal(
       `Waiting ${waitSec} sec for Bear.app to process the imports...`
     );
     await sleep(waitSec * 1000);
@@ -151,7 +156,7 @@ class Syncer {
       return;
     }
     const notes = await getAllNotes(this.opts, this.db);
-    console.error(`${notes.length} notes to export.`);
+    this.printOnTerminal(`${notes.length} notes to export.`);
     await this.writeToTempFolder(notes);
     await this.preserveExternalData();
     await this.rsyncTempToDestination();
@@ -159,7 +164,7 @@ class Syncer {
 
   private async writeToTempFolder(notes: Note[]) {
     if (this.opts.debug) {
-      console.error(`Temp folder: ${this.tempFolder}`);
+      this.printOnTerminal(`Temp folder: ${this.tempFolder}`);
     }
     // Notes
     for (const note of notes) {
@@ -171,13 +176,11 @@ class Syncer {
       const destFile = path.join(this.tempFolder, `${note.filename}.md`);
       await fs.writeFile(destFile, transformedText);
       await fs.utimes(destFile, note.modification_date, note.modification_date);
-      process.stderr.write("x");
     }
-    process.stderr.write("\n");
     // sync metadata file, only the "mtime" is valuable
     await fs.writeFile(path.join(this.tempFolder, SYNC.files.export), "Export");
     if (this.opts.debug) {
-      console.error(`Written notes to temp folder`);
+      this.printOnTerminal(`Written notes to temp folder`);
     }
     this.writeToLog(`${notes.length} notes exported.`);
   }
@@ -195,7 +198,7 @@ class Syncer {
       const to = path.join(this.tempFolder, entry);
       if (await fileExists(from)) {
         if (this.opts.debug) {
-          console.error(`cp -R ${from} ${to}`);
+          this.printOnTerminal(`cp -R ${from} ${to}`);
         }
         await ncp(from, to);
       }
@@ -224,7 +227,7 @@ class Syncer {
       this.destFolder,
     ];
     if (this.opts.debug) {
-      console.error(`rsync "${args.join('" "')}"`);
+      this.printOnTerminal(`rsync "${args.join('" "')}"`);
     }
     const { error } = spawnSync("rsync", args);
     if (error) {
@@ -232,17 +235,20 @@ class Syncer {
     }
   }
 
-  private writeToLog(line: string) {
-    console.error(line);
-    this.log += `${moment().format()}: ${line}\n`;
+  /**
+   * Use this for information for someone to see what the script is doing now.
+   */
+  private printOnTerminal(line: string) {
+    if (!this.opts.cron) {
+      console.error(line);
+    }
   }
 
-  private async writeLogToFile() {
-    const logFile = path.join(LOGS.folder, LOGS.file);
-    if (this.opts.debug) {
-      console.error(`Writing log to ${logFile}`);
-    }
-    await fs.appendFile(logFile, this.log);
+  /**
+   * Use this for information that should be stored in perpetuity in the log file.
+   */
+  private writeToLog(line: string) {
+    this.logger.log(line);
   }
 }
 

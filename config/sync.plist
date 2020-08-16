@@ -13,6 +13,7 @@
         <string>sync</string>
         <string>/Users/zahanm/Documents/Bear Notes</string>
         <string>--write</string>
+        <string>--cron</string>
     </array>
     <key>StartInterval</key>
     <integer>900</integer>

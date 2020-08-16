@@ -17,6 +17,7 @@ import missingTitles from "./lib/missingTitles";
 import { transformToObsidian, transformToBear } from "./lib/transformSyntax";
 import { sync } from "./lib/sync";
 import { setupLogs } from "./lib/setupLogs";
+import { Logger } from "./lib/Logger";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
@@ -26,7 +27,12 @@ async function main() {
   program
     .name("bear-tracks")
     .option("-d, --debug", "output extra debugging to stderr", false)
-    .option("--write", "allows writes to Bear.app's data stores", false);
+    .option("--write", "allows writes to Bear.app's data stores", false)
+    .option(
+      "--cron",
+      "redirects std{out,err} to a logfile for background execution",
+      false
+    );
   sqlite3.verbose();
   const bearDbPath = path.join(os.homedir(), BEAR_DB.path);
   const db = await open({
@@ -99,7 +105,9 @@ async function main() {
           default:
             throw new Error(`Invalid note-type: ${ntype}`);
         }
-        console.log(note.title);
+        const logger = new Logger(program.cron);
+        logger.log(`Created: ${note.title}`);
+        logger.close();
       });
 
     /**
