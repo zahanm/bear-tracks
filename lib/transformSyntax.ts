@@ -3,6 +3,7 @@ import { SYNC } from "./constants";
 const PATTERNS = {
   bear: {
     nested_tags: /\#\b([\w \-]*\/)+/gm,
+    separator: /^~~\-~~$/gm,
     todo: {
       unchecked: /(^[ \t]*)\-(?=\s+\S)/gm,
       checked: /(^[ \t]*)\+(?=\s+\S)/gm,
@@ -19,6 +20,7 @@ const PATTERNS = {
   },
   obsidian: {
     nested_tags: /\#\b([\w \-]*\_)+/gm,
+    separator: /^\*\*\*$/gm,
     todo: {
       unchecked: /(^[ \t]*)\- \[ \](?=\s+\S)/gm,
       checked: /(^[ \t]*)\- \[x\](?=\s+\S)/gm,
@@ -50,7 +52,8 @@ export async function transformToObsidian(
     })
     .replace(PATTERNS.bear.todo.unchecked, "$1- [ ]")
     .replace(PATTERNS.bear.todo.checked, "$1- [x]")
-    .replace(PATTERNS.bear.list.unordered, "$1-");
+    .replace(PATTERNS.bear.list.unordered, "$1-")
+    .replace(PATTERNS.bear.separator, "***");
   if (uuid) {
     return appendUUID(text, uuid);
   } else {
@@ -67,6 +70,7 @@ export async function transformToBear(
     .replace(PATTERNS.obsidian.styles.italics, "$1/$2/") // must run before styles.bold
     .replace(PATTERNS.obsidian.styles.bold, "$1*$2*")
     .replace(PATTERNS.obsidian.styles.strike, "$1-$2-")
+    .replace(PATTERNS.obsidian.separator, "~~-~~") // must run after strike
     .replace(PATTERNS.obsidian.nested_tags, (match: string) => {
       return match.replace(/\_/g, "/");
     })

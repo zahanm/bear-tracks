@@ -45,6 +45,9 @@ _underline_ (no transform, shows up as italics)
 ****
 **
 //
+
+Horizontal line separator
+~~-~~
 `;
 
 const obsidian_note = `# Hello World
@@ -91,6 +94,9 @@ _underline_ (no transform, shows up as italics)
 ****
 **
 //
+
+Horizontal line separator
+***
 
 <!-- {BearID:FOO-BAR-BAZ} -->
 `;
