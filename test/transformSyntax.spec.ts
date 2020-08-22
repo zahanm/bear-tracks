@@ -85,7 +85,7 @@ and ==another== highlight.
 **bold** **.**
 *italics* *.*
 _underline_ (no transform, shows up as italics)
--strike-
+~~strike~~
 
 (leave these alone)
 ****

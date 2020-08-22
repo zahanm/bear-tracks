@@ -14,6 +14,7 @@ const PATTERNS = {
       highlight: /(^|\s)\:\:(\S(.*?)\S)?\:\:/gm,
       bold: /(^|\s)\*([^\*\s](.*?)[^\*\s]?)\*/gm,
       italics: /(^|\s)\/(\S(.*?)\S?)\//gm,
+      strike: /(^|\s)\-(\S(.*?)\S?)\-/gm,
     },
   },
   obsidian: {
@@ -29,6 +30,7 @@ const PATTERNS = {
       highlight: /(^|\s)\=\=(\S(.*?)\S)?\=\=/gm,
       bold: /(^|\s)\*\*(\S(.*?)\S?)\*\*/gm,
       italics: /(^|\s)\*([^\*\s](.*?)[^\*\s]?)\*/gm,
+      strike: /(^|\s)~~(\S(.*?)\S?)~~/gm,
     },
   },
 };
@@ -42,6 +44,7 @@ export async function transformToObsidian(
     .replace(PATTERNS.bear.styles.highlight, "$1==$2==")
     .replace(PATTERNS.bear.styles.bold, "$1**$2**")
     .replace(PATTERNS.bear.styles.italics, "$1*$2*")
+    .replace(PATTERNS.bear.styles.strike, "$1~~$2~~")
     .replace(PATTERNS.bear.nested_tags, (match: string) => {
       return match.replace(/\//g, "_");
     })
@@ -63,6 +66,7 @@ export async function transformToBear(
     .replace(PATTERNS.obsidian.styles.highlight, `$1::$2::`)
     .replace(PATTERNS.obsidian.styles.italics, "$1/$2/") // must run before styles.bold
     .replace(PATTERNS.obsidian.styles.bold, "$1*$2*")
+    .replace(PATTERNS.obsidian.styles.strike, "$1-$2-")
     .replace(PATTERNS.obsidian.nested_tags, (match: string) => {
       return match.replace(/\_/g, "/");
     })
