@@ -19,6 +19,8 @@ import { getAllNotes, Note, getNote } from "./getAllNotes";
 import { transformToBear, transformToObsidian } from "./transformSyntax";
 import { sleep, fileExists } from "./utils";
 import { Logger } from "./Logger";
+import missingTitles from "./missingTitles";
+import { invalidFilenames } from "./invalids";
 
 const ncp = promisify(ncpCallback);
 
@@ -48,10 +50,27 @@ class Syncer {
       this.printOnTerminal("Starting sync.");
       await this.importUpdatesFromDestination();
       this.printOnTerminal("Import complete, now starting export.");
+      if (this.opts.strict) {
+        this.printOnTerminal("Checking for invalid titles.");
+        await this.checkForInvalidTitles();
+      }
       await this.exportToDestination();
       this.printOnTerminal("Sync complete.");
     } finally {
       this.logger.close();
+    }
+  }
+
+  private async checkForInvalidTitles() {
+    const [missing, invalids] = await Promise.all([
+      missingTitles(this.opts, this.db),
+      invalidFilenames(this.opts, this.db),
+    ]);
+    if (missing.length > 0 || invalids.length > 0) {
+      this.writeToLog(
+        `There are ${missing.length} missing and ${invalids.length} invalid note titles.`
+      );
+      throw new Error("Invalid note titles in strict mode.");
     }
   }
 

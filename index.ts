@@ -173,12 +173,17 @@ async function main() {
       .description(
         "Sync Bear.app notes to an external folder. Import, then export."
       )
-      .action(async function (dest: string) {
+      .option(
+        "--strict",
+        "abort the export if there are notes with invalid titles",
+        false
+      )
+      .action(async function (dest: string, command: Record<string, any>) {
         const stat = await fs.stat(dest);
         if (!stat.isDirectory()) {
           throw new Error(`Must provide valid folder: ${dest}`);
         }
-        await sync(program.opts(), db, dest);
+        await sync({ ...program.opts(), ...command.opts() }, db, dest);
       });
 
     /**
