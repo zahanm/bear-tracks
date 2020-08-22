@@ -2,24 +2,32 @@ import { equal, ok } from "assert";
 import { isValidFilename, isValidLink } from "../lib/invalids";
 
 describe("Valid filename checker", () => {
-  const valid_name = "foo bar";
-  it(`should let a valid name pass: ${valid_name}`, () => {
-    ok(isValidFilename(valid_name));
-    ok(isValidLink(valid_name));
-  });
-  const invalidNames = [
+  const validNames = [
+    "foo bar",
     "foo@bar",
     "foo!bar",
     "foo bar?",
-    "foo/bar",
-    "foo:bar",
     "foo~bar",
     "foo.bar",
     "foo$bar",
     "foobar-",
+    "foo, bar",
+    "!foo bar",
+  ];
+  validNames.forEach((name) => {
+    it(`should let a valid name pass: ${name}`, () => {
+      ok(isValidFilename(name));
+      ok(isValidLink(name));
+    });
+  });
+  const invalidNames = [
+    "foo / bar",
+    "foo | bar",
+    "foo: bar",
+    "foo/bar/baz/zub",
   ];
   invalidNames.forEach((name) => {
-    it(`should catch an invalid name: ${name}`, () => {
+    it(`should catch an invalid filename: ${name}`, () => {
       equal(isValidFilename(name), false);
     });
   });
@@ -32,7 +40,7 @@ describe("Valid filename checker", () => {
     "foo | bar",
   ];
   invalidLinks.forEach((name) => {
-    it(`should catch an invalid name: ${name}`, () => {
+    it(`should catch an invalid link name: ${name}`, () => {
       equal(isValidLink(name), false);
     });
   });

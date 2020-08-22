@@ -15,12 +15,8 @@ export const BEAR_DB = {
   },
 };
 
-/**
- * keep in sync with https://github.com/zahanm/Bear-Markdown-Export
- */
 export const FILENAME_PATTERNS = {
-  invalid: /[\/\\*?$@!^&\|~:\.]/,
-  ends_in_dash: /-$/,
+  invalid: /[\|\/:]/,
 };
 
 export const LINK_PATTERNS = {
