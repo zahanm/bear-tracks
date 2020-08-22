@@ -2,7 +2,6 @@ import { SYNC } from "./constants";
 
 const PATTERNS = {
   bear: {
-    highlight: /(^|\s)\:\:(\S(.*?)\S)?\:\:/gm,
     nested_tags: /\#\b([\w \-]*\/)+/gm,
     todo: {
       unchecked: /(^[ \t]*)\-(?=\s+\S)/gm,
@@ -11,9 +10,12 @@ const PATTERNS = {
     list: {
       unordered: /(^[ \t]*)\*(?=\s+\S)/gm,
     },
+    styles: {
+      highlight: /(^|\s)\:\:(\S(.*?)\S)?\:\:/gm,
+      bold: /(^|\s)\*(\S(.*?)\S)?\*/gm,
+    },
   },
   obsidian: {
-    highlight: /(^|\s)\=\=(\S(.*?)\S)?\=\=/gm,
     nested_tags: /\#\b([\w \-]*\_)+/gm,
     todo: {
       unchecked: /(^[ \t]*)\- \[ \](?=\s+\S)/gm,
@@ -21,6 +23,10 @@ const PATTERNS = {
     },
     list: {
       unordered: /(^[ \t]*)\-(?=\s+\S)(?! \[[ x]\])/gm,
+    },
+    styles: {
+      highlight: /(^|\s)\=\=(\S(.*?)\S)?\=\=/gm,
+      bold: /(^|\s)\*\*(\S(.*?)\S)?\*\*/gm,
     },
   },
 };
@@ -31,7 +37,8 @@ export async function transformToObsidian(
   uuid?: string
 ): Promise<string> {
   const text = content
-    .replace(PATTERNS.bear.highlight, "$1==$2==")
+    .replace(PATTERNS.bear.styles.highlight, "$1==$2==")
+    .replace(PATTERNS.bear.styles.bold, "$1**$2**")
     .replace(PATTERNS.bear.nested_tags, (match: string) => {
       return match.replace(/\//g, "_");
     })
@@ -50,7 +57,8 @@ export async function transformToBear(
   content: string
 ): Promise<string> {
   return content
-    .replace(PATTERNS.obsidian.highlight, `$1::$2::`)
+    .replace(PATTERNS.obsidian.styles.highlight, `$1::$2::`)
+    .replace(PATTERNS.obsidian.styles.bold, "$1*$2*")
     .replace(PATTERNS.obsidian.nested_tags, (match: string) => {
       return match.replace(/\_/g, "/");
     })

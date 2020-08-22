@@ -35,6 +35,11 @@ and ::another:: highlight.
 * list
   * with nesting
 * [[And]] these
+
+*bold*
+/italics/
+_underline_ (no transform, shows up as italics)
+-strike-
 `;
 
 const obsidian_note = `# Hello World
@@ -71,6 +76,11 @@ and ==another== highlight.
 - list
   - with nesting
 - [[And]] these
+
+**bold**
+/italics/
+_underline_ (no transform, shows up as italics)
+-strike-
 
 <!-- {BearID:FOO-BAR-BAZ} -->
 `;
