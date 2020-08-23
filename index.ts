@@ -18,6 +18,7 @@ import { transformToObsidian, transformToBear } from "./lib/transformSyntax";
 import { sync } from "./lib/sync";
 import { setupLogs } from "./lib/setupLogs";
 import { Logger } from "./lib/Logger";
+import { fixInvalidNoteTitles } from "./lib/titles";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
@@ -84,6 +85,18 @@ async function main() {
       .action(async function () {
         const titles = await missingTitles(program.opts(), db);
         console.log(titles.join("\n"));
+      });
+
+    /**
+     * Writes to Bear.app to re-title the notes with invalid filenames.
+     */
+    program
+      .command("fix-invalids")
+      .description(
+        "Re-title notes with invalid titles, that can't be filenames."
+      )
+      .action(async function () {
+        await fixInvalidNoteTitles(program.opts(), db);
       });
 
     type CreateNoteType = "daily" | "weekly";
