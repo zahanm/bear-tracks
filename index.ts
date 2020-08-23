@@ -18,7 +18,7 @@ import { transformToObsidian, transformToBear } from "./lib/transformSyntax";
 import { sync } from "./lib/sync";
 import { setupLogs } from "./lib/setupLogs";
 import { Logger } from "./lib/Logger";
-import { fixInvalidNoteTitles } from "./lib/titles";
+import { fixInvalidNoteTitles } from "./lib/fixTitles";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
@@ -91,7 +91,7 @@ async function main() {
      * Writes to Bear.app to re-title the notes with invalid filenames.
      */
     program
-      .command("fix-invalids")
+      .command("fix-titles")
       .description(
         "Re-title notes with invalid titles, that can't be filenames."
       )
