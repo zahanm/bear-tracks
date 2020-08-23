@@ -35,6 +35,7 @@ export async function sync(
 
 class Syncer {
   private logger: Logger;
+  private allNotes?: Note[];
 
   constructor(
     readonly opts: Record<string, any>,
@@ -61,10 +62,18 @@ class Syncer {
     }
   }
 
+  private async getNotesFromDB(): Promise<Note[]> {
+    if (!this.allNotes) {
+      this.allNotes = await getAllNotes(this.opts, this.db);
+    }
+    return this.allNotes;
+  }
+
   private async checkForInvalidTitles() {
+    const notes = await this.getNotesFromDB();
     const [missing, invalids] = await Promise.all([
-      missingTitles(this.opts, this.db),
-      invalidFilenames(this.opts, this.db),
+      missingTitles(this.opts, this.db, notes),
+      invalidFilenames(this.opts, this.db, notes),
     ]);
     if (missing.length > 0 || invalids.length > 0) {
       this.writeToLog(
@@ -176,7 +185,7 @@ class Syncer {
       );
       return;
     }
-    const notes = await getAllNotes(this.opts, this.db);
+    const notes = await this.getNotesFromDB();
     this.printOnTerminal(`${notes.length} notes to export.`);
     await this.writeToTempFolder(notes);
     await this.preserveExternalData();

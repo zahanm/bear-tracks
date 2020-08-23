@@ -1,11 +1,18 @@
 import { Database } from "sqlite";
 import { BEAR_DB, FILENAME_PATTERNS, LINK_PATTERNS } from "./constants";
+import { Note } from "./getAllNotes";
 
 export async function invalidFilenames(
   opts: Record<string, any>,
-  db: Database
+  db: Database,
+  notes?: Note[]
 ): Promise<string[]> {
-  const titles = await noteTitles(opts, db);
+  let titles;
+  if (!notes) {
+    titles = await noteTitles(opts, db);
+  } else {
+    titles = notes.map((note) => note.title);
+  }
   return titles.filter((title) => !isValidFilename(title));
 }
 

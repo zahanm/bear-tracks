@@ -1,19 +1,26 @@
 import { Database } from "sqlite";
 import { BEAR_DB, FILENAME_PATTERNS } from "./constants";
+import { Note } from "./getAllNotes";
 
 export default async function missingTitles(
   opts: Record<string, any>,
-  db: Database
+  db: Database,
+  notes?: Note[]
 ): Promise<string[]> {
-  const query = `
-    select ${BEAR_DB.notes.cols.title} as title,
-      ${BEAR_DB.notes.cols.text} as text
-      from ${BEAR_DB.notes.name}
-      where ${BEAR_DB.notes.cols.trashed} like '0'`;
-  if (opts.debug) {
-    console.error(query);
+  let rows;
+  if (!notes) {
+    const query = `
+      select ${BEAR_DB.notes.cols.title} as title,
+        ${BEAR_DB.notes.cols.text} as text
+        from ${BEAR_DB.notes.name}
+        where ${BEAR_DB.notes.cols.trashed} like '0'`;
+    if (opts.debug) {
+      console.error(query);
+    }
+    rows = await db.all(query);
+  } else {
+    rows = notes;
   }
-  const rows = await db.all(query);
   const missingTitles = rows
     .filter((row) => noTitle(row.text))
     .map((row) => row.title);
