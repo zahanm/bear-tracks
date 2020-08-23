@@ -1,6 +1,6 @@
 import { Database } from "sqlite";
 import { BEAR_DB } from "./constants";
-import { transformTitleToFilename } from "./titles";
+import transformTitleToFilename from "./transformTitle";
 
 export interface Note {
   uuid: string;

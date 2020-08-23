@@ -20,7 +20,7 @@ import { transformToBear, transformToObsidian } from "./transformSyntax";
 import { sleep, fileExists } from "./utils";
 import { Logger } from "./Logger";
 import missingTitles from "./missingTitles";
-import { invalidFilenames } from "./titles";
+import { invalidFilenames } from "./invalids";
 
 const ncp = promisify(ncpCallback);
 
