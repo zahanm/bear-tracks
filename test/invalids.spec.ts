@@ -1,5 +1,5 @@
 import { equal, ok } from "assert";
-import { isValidFilename, isValidLink } from "../lib/invalids";
+import { isValidFilename, isValidLink } from "../lib/titles";
 
 describe("Valid filename checker", () => {
   const validNames = [

@@ -9,16 +9,19 @@ import * as columnify from "columnify";
 
 import { BEAR_DB, AgentType } from "./lib/constants";
 import { findDuplicateNoteCounts } from "./lib/findDuplicates";
-import { invalidFilenames, invalidLinks } from "./lib/invalids";
 import { createDailyNote, createWeeklyNote } from "./lib/createNote";
 import { installAgent } from "./lib/installAgent";
 import { deduplicateNotes } from "./lib/deduplicateNotes";
-import missingTitles from "./lib/missingTitles";
 import { transformToObsidian, transformToBear } from "./lib/transformSyntax";
 import { sync } from "./lib/sync";
 import { setupLogs } from "./lib/setupLogs";
 import { Logger } from "./lib/Logger";
-import { fixInvalidNoteTitles } from "./lib/titles";
+import {
+  fixInvalidNoteTitles,
+  invalidFilenames,
+  invalidLinks,
+  missingTitles,
+} from "./lib/titles";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
