@@ -1,22 +1,21 @@
 import { Database } from "sqlite";
-import { getNote } from "./getAllNotes";
+import { getNote, getAllNotes } from "./getAllNotes";
 import { retitleNote } from "./utils";
 import { bearXCallback, XCommand, DEFAULT_OPTIONS } from "./bearXCallback";
+import { isValidFilename } from "./invalids";
 
 export async function fixInvalidNoteTitles(
   opts: Record<string, any>,
   db: Database
 ) {
-  const notes = [
-    await getNote(
-      opts,
-      db,
-      "0B7A51F6-3E94-460F-BFCD-CBD1BDEFB83F-28051-00005F14075BE18C"
-    ),
-  ];
+  const notes = (await getAllNotes(opts, db)).filter(
+    (note) => !isValidFilename(note.title)
+  );
   for (const note of notes) {
     console.error(`Invalid: ${note.title}`);
-    const newNote = retitleNote(note, "Fuffles AC + Tire");
+    // Uses the transformed title that already stripped out the
+    // invalid characters
+    const newNote = retitleNote(note, note.filename);
     await bearXCallback(opts, XCommand.EDIT, {
       id: note.uuid,
       mode: "replace_all",
