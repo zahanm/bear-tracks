@@ -17,6 +17,16 @@ I expect that your note starts with
 
 and give it the name `Title Here`.
 
+## "Strict" mode
+
+Highly recommended that you use this option: `--strict`. It will guarantee that
+the exported set of notes matches the ones in Bear. It looks for invalid, missing,
+or duplicate titles.
+
+Mostly, this revolves around the fact that the title is the filename for the exported
+note. And the internal links reference the note title as well, and it's how Obsidian
+discovers those links.
+
 ## Conflicts
 
 I check when the notes were last exported, and if the note
