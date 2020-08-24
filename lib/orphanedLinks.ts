@@ -59,6 +59,10 @@ export async function findOrphanedLinks(
   }
 }
 
+const codeRegexps = {
+  block: /^\`\`\`$.*?^\`\`\`$/gms,
+  inline: /\`.*?\`/g,
+};
 const linkRegexp = /\[\[(.*?)\]\]/g;
 
 /**
@@ -66,7 +70,10 @@ const linkRegexp = /\[\[(.*?)\]\]/g;
  */
 function extractLinks(text: string): string[] {
   const links: string[] = [];
-  for (const match of text.matchAll(linkRegexp)) {
+  const textWithoutCode = text
+    .replace(codeRegexps.block, "") // must call this before inline
+    .replace(codeRegexps.inline, "");
+  for (const match of textWithoutCode.matchAll(linkRegexp)) {
     links.push(match[1]);
   }
   return links;
