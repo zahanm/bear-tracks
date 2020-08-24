@@ -10,12 +10,20 @@ export interface TitleCount {
 /**
  * We can't just do this with a group-by in SQL because the titles
  * need to be transformed into filenames first
+ *
+ * @returns List of Notes which have a duplicate title
  */
 export async function findDuplicateNotes(
   opts: Record<string, any>,
-  db: Database
+  db: Database,
+  prefetchedNotes?: Note[]
 ): Promise<Note[]> {
-  const notes = await getAllNotes(opts, db);
+  let notes;
+  if (!prefetchedNotes) {
+    notes = await getAllNotes(opts, db);
+  } else {
+    notes = prefetchedNotes;
+  }
   // check for duplicates by filename
   const duplicateFilenameCounts = duplicateCounts(notes);
   const duplicateFilenames = new Set(
@@ -26,6 +34,10 @@ export async function findDuplicateNotes(
   );
 }
 
+/**
+ * @returns List of note titles with their respective counts.
+ * You can think of it as a { title => count } map.
+ */
 export async function findDuplicateNoteCounts(
   opts: Record<string, any>,
   db: Database

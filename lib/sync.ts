@@ -21,6 +21,7 @@ import { sleep, fileExists } from "./utils";
 import { Logger } from "./Logger";
 import missingTitles from "./missingTitles";
 import { invalidFilenames } from "./invalids";
+import { findDuplicateNotes } from "./findDuplicates";
 
 const ncp = promisify(ncpCallback);
 
@@ -71,13 +72,14 @@ class Syncer {
 
   private async checkForInvalidTitles() {
     const notes = await this.getNotesFromDB();
-    const [missing, invalids] = await Promise.all([
+    const [missing, invalids, duplicates] = await Promise.all([
       missingTitles(this.opts, this.db, notes),
       invalidFilenames(this.opts, this.db, notes),
+      findDuplicateNotes(this.opts, this.db, notes),
     ]);
-    if (missing.length > 0 || invalids.length > 0) {
+    if (missing.length > 0 || invalids.length > 0 || duplicates.length > 0) {
       this.writeToLog(
-        `There are ${missing.length} missing and ${invalids.length} invalid note titles.`
+        `There are ${missing.length} missing, ${duplicates.length} duplicate, and ${invalids.length} invalid note titles.`
       );
       throw new Error("Invalid note titles in strict mode.");
     }
