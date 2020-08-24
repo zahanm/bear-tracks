@@ -13,6 +13,7 @@ describe("Valid filename checker", () => {
     "foobar-",
     "foo, bar",
     "!foo bar",
+    "foo: bar",
   ];
   validNames.forEach((name) => {
     it(`should let a valid name pass: ${name}`, () => {
@@ -23,8 +24,9 @@ describe("Valid filename checker", () => {
   const invalidNames = [
     "foo / bar",
     "foo | bar",
-    "foo: bar",
     "foo/bar/baz/zub",
+    "/",
+    "  | foo",
   ];
   invalidNames.forEach((name) => {
     it(`should catch an invalid filename: ${name}`, () => {

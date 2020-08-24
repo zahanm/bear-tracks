@@ -16,7 +16,7 @@ export const BEAR_DB = {
 };
 
 export const FILENAME_PATTERNS = {
-  invalid: /[\|\/:]/,
+  invalid: /[\|\/]/,
 };
 
 export const LINK_PATTERNS = {
