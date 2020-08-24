@@ -68,7 +68,7 @@ const linkRegexp = /\[\[(.*?)\]\]/g;
 /**
  * @returns list of link "names". ie, the "Foo Bar" in [[Foo Bar]].
  */
-function extractLinks(text: string): string[] {
+export function extractLinks(text: string): string[] {
   const links: string[] = [];
   const textWithoutCode = text
     .replace(codeRegexps.block, "") // must call this before inline
