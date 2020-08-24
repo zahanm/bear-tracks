@@ -42,7 +42,7 @@ export async function createWeeklyNote(
 
 ## Social
 
-## Daily`;
+## Links`;
   if (opts.debug) {
     console.error(`Create: ${title}`);
   }
