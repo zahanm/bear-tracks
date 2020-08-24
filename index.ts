@@ -19,6 +19,7 @@ import { sync } from "./lib/sync";
 import { setupLogs } from "./lib/setupLogs";
 import { Logger } from "./lib/Logger";
 import { fixInvalidNoteTitles } from "./lib/fixTitles";
+import { findOrphanedLinks } from "./lib/orphanedLinks";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
@@ -208,6 +209,17 @@ async function main() {
       .description("Configures logrotate, and puts the logfile in place.")
       .action(async function () {
         await setupLogs(program.opts());
+      });
+
+    /**
+     * Finds orphaned links in notes. ie, a [[Note link]] that doesn't lead
+     * to a valid note.
+     */
+    program
+      .command("orphaned-links <notes-dir>")
+      .description("Find orphaned internal links")
+      .action(async function (notesDir: string) {
+        await findOrphanedLinks(program.opts(), notesDir);
       });
 
     await program.parseAsync();

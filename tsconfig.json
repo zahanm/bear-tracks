@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "CommonJS",
     "target": "ES6",
-    "lib": ["ES6"],
+    "lib": ["ES2020"],
     "jsx": "preserve",
     "noImplicitAny": true,
     "outDir": "out",

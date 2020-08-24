@@ -15,6 +15,20 @@
       "outFiles": ["${workspaceFolder}/out/**/*.js"]
     },
     {
+      "type": "node",
+      "request": "launch",
+      "name": "bear-tracks orphaned-links",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/index.ts",
+      "args": [
+        "--debug",
+        "orphaned-links",
+        "/Users/zahanm/Documents/Bear Notes/"
+      ],
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
+    },
+    {
       "args": ["--timeout", "999999", "--colors", "${workspaceFolder}/test"],
       "internalConsoleOptions": "openOnSessionStart",
       "name": "Test",
