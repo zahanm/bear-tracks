@@ -169,7 +169,7 @@ class Syncer {
       }
     } else {
       // create a new note
-      this.writeToLog(`Create: ${title}`);
+      this.writeToLog(`New: ${title}`);
       if (this.opts.debug) {
         process.stderr.write(text + "\n");
       }
