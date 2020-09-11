@@ -48,6 +48,15 @@ _underline_ (no transform, shows up as italics)
 
 Horizontal line separator
 ~~-~~
+
+Don't apply transforms in code blocks
+\`\`\`
+--strike--
+\`\`\`
+
+\`\`\`sh
+*bold*
+\`\`\`
 `;
 
 const obsidian_note = `# Hello World
@@ -97,6 +106,15 @@ _underline_ (no transform, shows up as italics)
 
 Horizontal line separator
 ***
+
+Don't apply transforms in code blocks
+\`\`\`
+--strike--
+\`\`\`
+
+\`\`\`sh
+*bold*
+\`\`\`
 
 <!-- {BearID:FOO-BAR-BAZ} -->
 `;

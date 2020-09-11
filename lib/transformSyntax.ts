@@ -35,6 +35,9 @@ const PATTERNS = {
       strike: /(^|\s)~~(\S(.*?)\S?)~~/g,
     },
   },
+  common: {
+    codeblock: /\`\`\`/,
+  },
 };
 
 export async function transformToObsidian(
@@ -42,9 +45,16 @@ export async function transformToObsidian(
   content: string,
   uuid?: string
 ): Promise<string> {
+  let isInCodeBlock = false;
   const text = content
     .split("\n")
     .map((line) => {
+      if (line.match(PATTERNS.common.codeblock)) {
+        isInCodeBlock = !isInCodeBlock;
+      }
+      if (isInCodeBlock) {
+        return line; // run no transforms in code block
+      }
       return line
         .replace(PATTERNS.bear.styles.highlight, "$1==$2==")
         .replace(PATTERNS.bear.styles.bold, "$1**$2**")
@@ -70,9 +80,16 @@ export async function transformToBear(
   opts: Record<string, any>,
   content: string
 ): Promise<string> {
+  let isInCodeBlock = false;
   const text = content
     .split("\n")
     .map((line) => {
+      if (line.match(PATTERNS.common.codeblock)) {
+        isInCodeBlock = !isInCodeBlock;
+      }
+      if (isInCodeBlock) {
+        return line; // run no transforms in code block
+      }
       return line
         .replace(PATTERNS.obsidian.styles.highlight, `$1::$2::`)
         .replace(PATTERNS.obsidian.styles.italics, "$1/$2/") // must run before styles.bold
