@@ -2,37 +2,37 @@ import { SYNC } from "./constants";
 
 const PATTERNS = {
   bear: {
-    nested_tags: /\#\b([\w \-]*\/)+/gm,
-    separator: /^~~\-~~$/gm,
+    nested_tags: /\#\b([\w \-]*\/)+/g,
+    separator: /^~~\-~~$/,
     todo: {
-      unchecked: /(^[ \t]*)\-(?=\s+\S)/gm,
-      checked: /(^[ \t]*)\+(?=\s+\S)/gm,
+      unchecked: /(^[ \t]*)\-(?=\s+\S)/g,
+      checked: /(^[ \t]*)\+(?=\s+\S)/g,
     },
     list: {
-      unordered: /(^[ \t]*)\*(?=\s+\S)/gm,
+      unordered: /(^[ \t]*)\*(?=\s+\S)/g,
     },
     styles: {
-      highlight: /(^|\s)\:\:(\S(.*?)\S)?\:\:/gm,
-      bold: /(^|\s)\*([^\*\s](.*?)[^\*\s]?)\*/gm,
-      italics: /(^|\s)\/(\S(.*?)\S?)\//gm,
-      strike: /(^|\s)\-(\S(.*?)\S?)\-/gm,
+      highlight: /(^|\s)\:\:(\S(.*?)\S)?\:\:/g,
+      bold: /(^|\s)\*([^\*\s](.*?)[^\*\s]?)\*/g,
+      italics: /(^|\s)\/(\S(.*?)\S?)\//g,
+      strike: /(^|\s)\-(\S(.*?)\S?)\-/g,
     },
   },
   obsidian: {
-    nested_tags: /\#\b([\w \-]*\_)+/gm,
-    separator: /^\*\*\*$/gm,
+    nested_tags: /\#\b([\w \-]*\_)+/g,
+    separator: /^\*\*\*$/,
     todo: {
-      unchecked: /(^[ \t]*)\- \[ \](?=\s+\S)/gm,
-      checked: /(^[ \t]*)\- \[x\](?=\s+\S)/gm,
+      unchecked: /(^[ \t]*)\- \[ \](?=\s+\S)/g,
+      checked: /(^[ \t]*)\- \[x\](?=\s+\S)/g,
     },
     list: {
-      unordered: /(^[ \t]*)\-(?=\s+\S)(?! \[[ x]\])/gm,
+      unordered: /(^[ \t]*)\-(?=\s+\S)(?! \[[ x]\])/g,
     },
     styles: {
-      highlight: /(^|\s)\=\=(\S(.*?)\S)?\=\=/gm,
-      bold: /(^|\s)\*\*(\S(.*?)\S?)\*\*/gm,
-      italics: /(^|\s)\*([^\*\s](.*?)[^\*\s]?)\*/gm,
-      strike: /(^|\s)~~(\S(.*?)\S?)~~/gm,
+      highlight: /(^|\s)\=\=(\S(.*?)\S)?\=\=/g,
+      bold: /(^|\s)\*\*(\S(.*?)\S?)\*\*/g,
+      italics: /(^|\s)\*([^\*\s](.*?)[^\*\s]?)\*/g,
+      strike: /(^|\s)~~(\S(.*?)\S?)~~/g,
     },
   },
 };
@@ -43,17 +43,22 @@ export async function transformToObsidian(
   uuid?: string
 ): Promise<string> {
   const text = content
-    .replace(PATTERNS.bear.styles.highlight, "$1==$2==")
-    .replace(PATTERNS.bear.styles.bold, "$1**$2**")
-    .replace(PATTERNS.bear.styles.italics, "$1*$2*")
-    .replace(PATTERNS.bear.styles.strike, "$1~~$2~~")
-    .replace(PATTERNS.bear.nested_tags, (match: string) => {
-      return match.replace(/\//g, "_");
+    .split("\n")
+    .map((line) => {
+      return line
+        .replace(PATTERNS.bear.styles.highlight, "$1==$2==")
+        .replace(PATTERNS.bear.styles.bold, "$1**$2**")
+        .replace(PATTERNS.bear.styles.italics, "$1*$2*")
+        .replace(PATTERNS.bear.styles.strike, "$1~~$2~~")
+        .replace(PATTERNS.bear.nested_tags, (match: string) => {
+          return match.replace(/\//g, "_");
+        })
+        .replace(PATTERNS.bear.todo.unchecked, "$1- [ ]")
+        .replace(PATTERNS.bear.todo.checked, "$1- [x]")
+        .replace(PATTERNS.bear.list.unordered, "$1-")
+        .replace(PATTERNS.bear.separator, "***");
     })
-    .replace(PATTERNS.bear.todo.unchecked, "$1- [ ]")
-    .replace(PATTERNS.bear.todo.checked, "$1- [x]")
-    .replace(PATTERNS.bear.list.unordered, "$1-")
-    .replace(PATTERNS.bear.separator, "***");
+    .join("\n");
   if (uuid) {
     return appendUUID(text, uuid);
   } else {
@@ -65,19 +70,24 @@ export async function transformToBear(
   opts: Record<string, any>,
   content: string
 ): Promise<string> {
-  return content
-    .replace(PATTERNS.obsidian.styles.highlight, `$1::$2::`)
-    .replace(PATTERNS.obsidian.styles.italics, "$1/$2/") // must run before styles.bold
-    .replace(PATTERNS.obsidian.styles.bold, "$1*$2*")
-    .replace(PATTERNS.obsidian.styles.strike, "$1-$2-")
-    .replace(PATTERNS.obsidian.separator, "~~-~~") // must run after strike
-    .replace(PATTERNS.obsidian.nested_tags, (match: string) => {
-      return match.replace(/\_/g, "/");
+  const text = content
+    .split("\n")
+    .map((line) => {
+      return line
+        .replace(PATTERNS.obsidian.styles.highlight, `$1::$2::`)
+        .replace(PATTERNS.obsidian.styles.italics, "$1/$2/") // must run before styles.bold
+        .replace(PATTERNS.obsidian.styles.bold, "$1*$2*")
+        .replace(PATTERNS.obsidian.styles.strike, "$1-$2-")
+        .replace(PATTERNS.obsidian.separator, "~~-~~") // must run after strike
+        .replace(PATTERNS.obsidian.nested_tags, (match: string) => {
+          return match.replace(/\_/g, "/");
+        })
+        .replace(PATTERNS.obsidian.list.unordered, "$1*") // must run before todo.unchecked
+        .replace(PATTERNS.obsidian.todo.unchecked, "$1-")
+        .replace(PATTERNS.obsidian.todo.checked, "$1+");
     })
-    .replace(PATTERNS.obsidian.list.unordered, "$1*") // must run before todo.unchecked
-    .replace(PATTERNS.obsidian.todo.unchecked, "$1-")
-    .replace(PATTERNS.obsidian.todo.checked, "$1+")
-    .replace(SYNC.patterns.uuid, "");
+    .join("\n");
+  return text.replace(SYNC.patterns.uuid, "");
 }
 
 function appendUUID(text: string, uuid: string): string {
