@@ -83,12 +83,20 @@ class Syncer {
       );
       throw new Error("Invalid note titles in strict mode.");
     }
+    if (this.opts.debug) {
+      this.printOnTerminal("No invalid note titles");
+    }
   }
 
   private async importUpdatesFromDestination() {
     if (!(await destFolderIsPopulated(this.destFolder))) {
       this.writeToLog(
         `Destination ${this.destFolder} is not populated, skipping import.`
+      );
+      // Still need to update import mtime
+      await fs.writeFile(
+        path.join(this.tempFolder, SYNC.files.import),
+        "Import"
       );
       return;
     }

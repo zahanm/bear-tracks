@@ -24,9 +24,6 @@ export default async function missingTitles(
   const missingTitles = rows
     .filter((row) => noTitle(row.text))
     .map((row) => row.title);
-  if (opts.debug) {
-    console.error(missingTitles.length);
-  }
   return missingTitles;
 }
 
