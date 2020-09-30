@@ -8,7 +8,7 @@ export interface Note {
 export async function createDailyNote(
   opts: Record<string, any>
 ): Promise<Note> {
-  const title = moment().format("ddd - MMM D, YYYY");
+  const title = moment().add(1, "day").format("ddd - MMM D, YYYY");
   const body = `## Plan
 
 ## Done`;

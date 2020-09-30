@@ -18,9 +18,9 @@
         <key>Weekday</key>
         <integer>5</integer>
         <key>Hour</key>
-        <integer>0</integer>
+        <integer>15</integer>
         <key>Minute</key>
-        <integer>1</integer>
+        <integer>00</integer>
     </dict>
     <key>EnvironmentVariables</key>
     <dict>
