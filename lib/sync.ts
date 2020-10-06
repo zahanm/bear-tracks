@@ -50,6 +50,11 @@ class Syncer {
   async run() {
     try {
       this.printOnTerminal("Starting sync.");
+      if (this.opts.strict) {
+        this.printOnTerminal("Checking for invalid titles.");
+        await this.checkForInvalidTitles();
+      }
+      this.printOnTerminal("Starting import.");
       await this.importUpdatesFromDestination();
       this.printOnTerminal("Import complete, now starting export.");
       if (this.opts.strict) {
