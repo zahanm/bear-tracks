@@ -155,7 +155,7 @@ class Syncer {
     }
     // Wait for Bear.app to catch up
     if (numImported > 0) {
-      const waitSec = 3;
+      const waitSec = 5;
       this.printOnTerminal(
         `Waiting ${waitSec} sec for Bear.app to process the imports...`
       );
