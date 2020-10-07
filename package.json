@@ -21,7 +21,8 @@
     "moment": "^2.27.0",
     "ncp": "^2.0.0",
     "sqlite": "^4.0.12",
-    "sqlite3": "^5.0.0"
+    "sqlite3": "^5.0.0",
+    "yaml": "^1.10.0"
   },
   "scripts": {
     "test": "mocha"
