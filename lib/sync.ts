@@ -111,6 +111,7 @@ class Syncer {
       path.join(this.destFolder, SYNC.files.export)
     );
     let numImported = 0;
+    let numConflicts = 0;
     for await (const entry of await fs.opendir(this.destFolder)) {
       const file = path.join(this.destFolder, entry.name);
       if (entry.isDirectory()) {
@@ -131,13 +132,28 @@ class Syncer {
         const uuid = findUUID(text);
         const title = findTitle(text, entry.name);
         const transformed = await transformToBear(this.opts, text);
-        await this.updateNoteInBear(uuid, transformed, title, fileTs, exportTs);
+        const isConflict = await this.updateNoteInBear(
+          uuid,
+          transformed,
+          title,
+          fileTs,
+          exportTs
+        );
         numImported++;
+        if (isConflict) numConflicts++;
       }
     }
     // Sync metadata file for the "mtime"
     await fs.writeFile(path.join(this.tempFolder, SYNC.files.import), "Import");
     this.writeToLog(`${numImported} notes imported.`);
+    // Check for conflicts
+    if (numConflicts > 0) {
+      this.writeToLog(
+        `${numConflicts} conflicts in the import. Aborting the rest of the sync.`
+      );
+      throw new Error(`${numConflicts} conflicts in the import.`);
+    }
+    // Wait for Bear.app to catch up
     if (numImported > 0) {
       const waitSec = 3;
       this.printOnTerminal(
@@ -147,13 +163,16 @@ class Syncer {
     }
   }
 
+  /**
+   * @returns whether this update was a conflict
+   */
   private async updateNoteInBear(
     uuid: string | null,
     text: string,
     title: string,
     mtime: Date,
     lastExportTs: Date
-  ) {
+  ): Promise<boolean> {
     if (uuid != null) {
       // update existing note
       const note = await getNote(this.opts, this.db, uuid);
@@ -168,6 +187,7 @@ class Syncer {
           text: textWithConflict,
           ...DEFAULT_OPTIONS,
         });
+        return true;
       } else {
         this.writeToLog(`Update: ${title}`);
         if (this.opts.debug) {
@@ -179,6 +199,7 @@ class Syncer {
           text,
           ...DEFAULT_OPTIONS,
         });
+        return false;
       }
     } else {
       // create a new note
@@ -190,6 +211,7 @@ class Syncer {
         text,
         ...DEFAULT_OPTIONS,
       });
+      return false;
     }
   }
 
