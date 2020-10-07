@@ -6,8 +6,9 @@ import * as sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { program } from "commander";
 import * as columnify from "columnify";
+import * as YAML from "yaml";
 
-import { BEAR_DB, AgentType } from "./lib/constants";
+import { BEAR_DB, AgentType, CONF } from "./lib/constants";
 import { findDuplicateNoteCounts } from "./lib/findDuplicates";
 import { invalidFilenames, invalidLinks } from "./lib/invalids";
 import { createDailyNote, createWeeklyNote } from "./lib/createNote";
@@ -20,6 +21,7 @@ import { setupLogs } from "./lib/setupLogs";
 import { Logger } from "./lib/Logger";
 import { fixInvalidNoteTitles } from "./lib/fixTitles";
 import { findOrphanedLinks } from "./lib/orphanedLinks";
+import { notifyAndStopSync } from "./lib/notify";
 
 /**
  * NOTE: Since this is a script, the @returns notations below are referring to
@@ -35,6 +37,7 @@ async function main() {
       "redirects std{out,err} to a logfile for background execution",
       false
     );
+  const conf = await readConf();
   sqlite3.verbose();
   const bearDbPath = path.join(os.homedir(), BEAR_DB.path);
   const db = await open({
@@ -193,11 +196,19 @@ async function main() {
         false
       )
       .action(async function (dest: string, command: Record<string, any>) {
-        const stat = await fs.stat(dest);
-        if (!stat.isDirectory()) {
-          throw new Error(`Must provide valid folder: ${dest}`);
+        try {
+          const stat = await fs.stat(dest);
+          if (!stat.isDirectory()) {
+            throw new Error(`Must provide valid folder: ${dest}`);
+          }
+          await sync({ ...program.opts(), ...command.opts() }, db, dest);
+        } catch (err) {
+          if (program.cron && conf != null) {
+            notifyAndStopSync(program.opts(), conf, err.message);
+          } else {
+            throw err;
+          }
         }
-        await sync({ ...program.opts(), ...command.opts() }, db, dest);
       });
 
     /**
@@ -226,6 +237,15 @@ async function main() {
   } finally {
     await db.close();
   }
+}
+
+async function readConf(): Promise<CONF | null> {
+  const filename = process.env["TRACKS_CONF"];
+  if (filename === undefined) {
+    return null;
+  }
+  const contents = await fs.readFile(filename, { encoding: "utf8" });
+  return YAML.parse(contents);
 }
 
 main().catch((err) => {

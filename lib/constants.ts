@@ -64,3 +64,10 @@ export const LOGS = {
     file: "logrotate.conf",
   },
 };
+
+export type CONF = {
+  things: {
+    "auth-token": string;
+    "list-id": string;
+  };
+};
