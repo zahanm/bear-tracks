@@ -36,7 +36,6 @@ export async function sync(
 
 class Syncer {
   private logger: Logger;
-  private allNotes?: Note[];
 
   constructor(
     readonly opts: Record<string, any>,
@@ -69,10 +68,7 @@ class Syncer {
   }
 
   private async getNotesFromDB(): Promise<Note[]> {
-    if (!this.allNotes) {
-      this.allNotes = await getAllNotes(this.opts, this.db);
-    }
-    return this.allNotes;
+    return await getAllNotes(this.opts, this.db);
   }
 
   private async checkForInvalidTitles() {
