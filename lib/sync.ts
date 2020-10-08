@@ -140,7 +140,7 @@ class Syncer {
           exportTs
         );
         numImported++;
-        if (isConflict) numConflicts++;
+        numConflicts += isConflict ? 1 : 0;
       }
     }
     // Sync metadata file for the "mtime"
