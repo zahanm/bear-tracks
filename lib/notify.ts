@@ -32,6 +32,11 @@ less +G /usr/local/var/log/edu.zahanm.bear-tracks.log
 Run it locally
 bear-tracks sync ...
 
+Check titles
+bear-tracks invalids filename
+bear-tracks no-titles
+bear-tracks duplicates
+
 Re-enable the job
 launchctl load ~/Library/LaunchAgents/edu.zahanm.bear-tracks.sync.plist
 `;

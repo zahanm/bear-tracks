@@ -82,6 +82,15 @@ class Syncer {
       this.writeToLog(
         `There are ${missing.length} missing, ${duplicates.length} duplicate, and ${invalids.length} invalid note titles.`
       );
+      missing.forEach((title) => {
+        this.writeToLog(`Missing: ${title}`);
+      });
+      invalids.forEach((title) => {
+        this.writeToLog(`Invalid: ${title}`);
+      });
+      duplicates.forEach((note) => {
+        this.writeToLog(`Duplicate: ${note.title}`);
+      });
       throw new Error("Invalid note titles in strict mode.");
     }
     if (this.opts.debug) {
