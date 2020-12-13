@@ -1,3 +1,4 @@
+import { assert } from "console";
 import * as moment from "moment";
 import { bearApiCreateNote, DEFAULT_OPTIONS } from "./bearXCallback";
 
@@ -8,7 +9,14 @@ export interface Note {
 export async function createDailyNote(
   opts: Record<string, any>
 ): Promise<Note> {
-  const title = moment().add(1, "day").format("ddd - MMM D, YYYY");
+  const tomorrow = moment().add(1, "day");
+  let title: string;
+  assert(tomorrow.day() != 0); // Don't run this on Sunday
+  if (tomorrow.day() === 6) {
+    title = tomorrow.format("Weekend - MMM D, YYYY");
+  } else {
+    title = tomorrow.format("ddd - MMM D, YYYY");
+  }
   const body = `## Plan
 
 ## Done`;
