@@ -11,7 +11,7 @@ export async function createDailyNote(
 ): Promise<Note> {
   const tomorrow = moment().add(1, "day");
   let title: string;
-  assert(tomorrow.day() != 0); // Don't run this on Sunday
+  assert(tomorrow.day() != 0); // Don't run this for Sunday
   if (tomorrow.day() === 6) {
     title = tomorrow.format("Weekend - MMM D, YYYY");
   } else {
