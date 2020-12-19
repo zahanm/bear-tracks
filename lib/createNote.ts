@@ -13,7 +13,7 @@ export async function createDailyNote(
   let title: string;
   assert(tomorrow.day() != 0); // Don't run this for Sunday
   if (tomorrow.day() === 6) {
-    title = tomorrow.format("Weekend - MMM D, YYYY");
+    title = `Weekend - ${tomorrow.format("MMM D, YYYY")}`;
   } else {
     title = tomorrow.format("ddd - MMM D, YYYY");
   }
