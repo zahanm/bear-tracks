@@ -19,7 +19,9 @@ export async function createDailyNote(
   }
   const body = `## Plan
 
-## Done`;
+## Done
+
+#debrief/daily`;
   if (opts.debug) {
     console.error(`Create: ${title}`);
   }
@@ -50,7 +52,9 @@ export async function createWeeklyNote(
 
 ## Social
 
-## Links`;
+## Links
+
+#plans/weekly`;
   if (opts.debug) {
     console.error(`Create: ${title}`);
   }
