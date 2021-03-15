@@ -50,6 +50,8 @@ export async function createWeeklyNote(
 
 ## Home
 
+## Travel
+
 ## Social
 
 ## Links
