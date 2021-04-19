@@ -63,6 +63,7 @@ export async function createWeeklyNote(
   await bearApiCreateNote(opts, {
     title,
     text: body,
+    pin: "yes",
     ...DEFAULT_OPTIONS,
   });
   return {
