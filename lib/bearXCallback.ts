@@ -9,10 +9,19 @@ export interface CREATE_NOTE_OPTIONS extends ParsedUrlQueryInput {
   text: string;
 }
 
-export const DEFAULT_CREATE_OPTIONS = {
+export const DEFAULT_OPTIONS = {
   show_window: "no",
   open_note: "no",
 };
+
+export interface EDIT_NOTE_OPTIONS extends ParsedUrlQueryInput {
+  mode: "prepend" | "append" | "replace_all" | "replace";
+  show_window: string;
+  open_note: string;
+  id: string;
+  title?: string;
+  text: string;
+}
 
 export enum XCommand {
   CREATE,
@@ -28,9 +37,8 @@ export async function bearApiCreateNote(
 
 export async function bearApiEditNote(
   opts: Record<string, any>,
-  options: CREATE_NOTE_OPTIONS
+  options: EDIT_NOTE_OPTIONS
 ) {
-  // TODO implement this
   await bearXCallback(opts, XCommand.EDIT, options);
 }
 

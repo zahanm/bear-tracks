@@ -1,11 +1,7 @@
 import { Database } from "sqlite";
 import { getAllNotes } from "./getAllNotes";
 import { retitleNote } from "./utils";
-import {
-  bearXCallback,
-  XCommand,
-  DEFAULT_CREATE_OPTIONS,
-} from "./bearXCallback";
+import { bearApiEditNote, DEFAULT_OPTIONS } from "./bearXCallback";
 import { isValidFilename } from "./invalids";
 
 export async function fixInvalidNoteTitles(
@@ -20,11 +16,11 @@ export async function fixInvalidNoteTitles(
     // Uses the transformed title that already stripped out the
     // invalid characters
     const newNote = retitleNote(note, note.filename);
-    await bearXCallback(opts, XCommand.EDIT, {
+    await bearApiEditNote(opts, {
       id: note.uuid,
       mode: "replace_all",
       text: newNote.text,
-      ...DEFAULT_CREATE_OPTIONS,
+      ...DEFAULT_OPTIONS,
     });
     console.error(`Fixed: ${newNote.title}`);
   }

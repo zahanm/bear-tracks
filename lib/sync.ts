@@ -10,9 +10,8 @@ import { ncp as ncpCallback } from "ncp";
 
 import {
   bearApiCreateNote,
-  DEFAULT_CREATE_OPTIONS,
-  bearXCallback,
-  XCommand,
+  bearApiEditNote,
+  DEFAULT_OPTIONS,
 } from "./bearXCallback";
 import { BEAR_DB, SYNC } from "./constants";
 import { getAllNotes, Note, getNote } from "./getAllNotes";
@@ -190,7 +189,7 @@ class Syncer {
         }
         await bearApiCreateNote(this.opts, {
           text: textWithConflict,
-          ...DEFAULT_CREATE_OPTIONS,
+          ...DEFAULT_OPTIONS,
         });
         return true;
       } else {
@@ -198,11 +197,11 @@ class Syncer {
         if (this.opts.debug) {
           process.stderr.write(text + "\n");
         }
-        await bearXCallback(this.opts, XCommand.EDIT, {
+        await bearApiEditNote(this.opts, {
           id: uuid,
           mode: "replace_all",
           text,
-          ...DEFAULT_CREATE_OPTIONS,
+          ...DEFAULT_OPTIONS,
         });
         return false;
       }
@@ -214,7 +213,7 @@ class Syncer {
       }
       await bearApiCreateNote(this.opts, {
         text,
-        ...DEFAULT_CREATE_OPTIONS,
+        ...DEFAULT_OPTIONS,
       });
       return false;
     }

@@ -1,6 +1,6 @@
 import { assert } from "console";
 import * as moment from "moment";
-import { bearApiCreateNote, DEFAULT_CREATE_OPTIONS } from "./bearXCallback";
+import { bearApiCreateNote, DEFAULT_OPTIONS } from "./bearXCallback";
 
 export interface Note {
   title: string;
@@ -25,7 +25,7 @@ export async function createDailyNote(
     title,
     text: body,
     pin: "yes",
-    ...DEFAULT_CREATE_OPTIONS,
+    ...DEFAULT_OPTIONS,
   });
   return {
     title,
@@ -69,7 +69,7 @@ export async function createWeeklyNote(
     title,
     text: body,
     pin: "yes",
-    ...DEFAULT_CREATE_OPTIONS,
+    ...DEFAULT_OPTIONS,
   });
   return {
     title,
