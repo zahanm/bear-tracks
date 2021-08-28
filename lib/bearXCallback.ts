@@ -18,7 +18,7 @@ export interface EDIT_NOTE_OPTIONS extends ParsedUrlQueryInput {
   mode: "prepend" | "append" | "replace_all" | "replace";
   show_window: string;
   open_note: string;
-  id: string;
+  id?: string;
   title?: string;
   text: string;
 }

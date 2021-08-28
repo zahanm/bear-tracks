@@ -1,6 +1,10 @@
 import { assert } from "console";
 import * as moment from "moment";
-import { bearApiCreateNote, DEFAULT_OPTIONS } from "./bearXCallback";
+import {
+  bearApiCreateNote,
+  bearApiEditNote,
+  DEFAULT_OPTIONS,
+} from "./bearXCallback";
 
 export interface Note {
   title: string;
@@ -27,6 +31,22 @@ export async function createDailyNote(
     pin: "yes",
     ...DEFAULT_OPTIONS,
   });
+
+  // Add link to this note to the bottom of the weekly note
+  const thisWeek = weeklyTitle(tomorrow);
+  const link = `* [[${title}]]
+`;
+  if (opts.debug) {
+    console.error(`Edit: ${thisWeek}`);
+  }
+  await bearApiEditNote(opts, {
+    mode: "append",
+    title: thisWeek,
+    text: link,
+    ...DEFAULT_OPTIONS,
+  });
+
+  // Return newly created note
   return {
     title,
   };
@@ -58,10 +78,11 @@ export async function createWeeklyNote(
 
 ## Social
 
+#plans/weekly
+
 ## Links
 * Previous: [[${previousTitle}]]
-
-#plans/weekly`;
+`;
   if (opts.debug) {
     console.error(`Create: ${title}`);
   }
