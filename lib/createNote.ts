@@ -12,7 +12,7 @@ export async function createDailyNote(
 ): Promise<Note> {
   const tomorrow = now.add(1, "day");
   let title: string;
-  assert(tomorrow.day() != 0); // Don't run this for Sunday
+  assert(tomorrow.day() != 0); // Don't run this on Saturday, for Sunday
   if (tomorrow.day() === 6) {
     title = `Weekend - ${tomorrow.format("MMM D, YYYY")}`;
   } else {
@@ -41,11 +41,8 @@ export async function createWeeklyNote(
   opts: Record<string, any>,
   now: moment.Moment
 ): Promise<Note> {
-  const start = now.add(1, "week").startOf("week");
-  const end = now.add(1, "week").endOf("week");
-  const title = `Plan for ${start.format("MMM D")} - ${end.format(
-    "MMM D, YYYY"
-  )}`;
+  const title = weeklyTitle(now.clone().add(1, "week"));
+  const previousTitle = weeklyTitle(now);
   const body = `## Work
 
 ## Me
@@ -57,6 +54,7 @@ export async function createWeeklyNote(
 ## Social
 
 ## Links
+* Previous: [[${previousTitle}]]
 
 #plans/weekly`;
   if (opts.debug) {
@@ -71,4 +69,13 @@ export async function createWeeklyNote(
   return {
     title,
   };
+}
+
+function weeklyTitle(at: moment.Moment): string {
+  const start = at.clone().startOf("week");
+  const end = at.clone().endOf("week");
+  const title = `Plan for ${start.format("MMM D")} - ${end.format(
+    "MMM D, YYYY"
+  )}`;
+  return title;
 }
