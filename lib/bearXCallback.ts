@@ -23,11 +23,6 @@ export interface EDIT_NOTE_OPTIONS extends ParsedUrlQueryInput {
   text: string;
 }
 
-export enum XCommand {
-  CREATE,
-  EDIT,
-}
-
 export async function bearApiCreateNote(
   opts: Record<string, any>,
   options: CREATE_NOTE_OPTIONS
@@ -42,13 +37,18 @@ export async function bearApiEditNote(
   await bearXCallback(opts, XCommand.EDIT, options);
 }
 
+enum XCommand {
+  CREATE,
+  EDIT,
+}
+
 /**
  * Refer to https://bear.app/faq/X-callback-url%20Scheme%20documentation/
  *
  * @param command Which API endpoint to call
  * @param options Parameters for API
  */
-export async function bearXCallback(
+async function bearXCallback(
   opts: Record<string, any>,
   command: XCommand,
   options: ParsedUrlQueryInput
