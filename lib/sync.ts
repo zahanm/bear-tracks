@@ -10,7 +10,7 @@ import { ncp as ncpCallback } from "ncp";
 
 import {
   bearApiCreateNote,
-  DEFAULT_OPTIONS,
+  DEFAULT_CREATE_OPTIONS,
   bearXCallback,
   XCommand,
 } from "./bearXCallback";
@@ -190,7 +190,7 @@ class Syncer {
         }
         await bearApiCreateNote(this.opts, {
           text: textWithConflict,
-          ...DEFAULT_OPTIONS,
+          ...DEFAULT_CREATE_OPTIONS,
         });
         return true;
       } else {
@@ -202,7 +202,7 @@ class Syncer {
           id: uuid,
           mode: "replace_all",
           text,
-          ...DEFAULT_OPTIONS,
+          ...DEFAULT_CREATE_OPTIONS,
         });
         return false;
       }
@@ -214,7 +214,7 @@ class Syncer {
       }
       await bearApiCreateNote(this.opts, {
         text,
-        ...DEFAULT_OPTIONS,
+        ...DEFAULT_CREATE_OPTIONS,
       });
       return false;
     }

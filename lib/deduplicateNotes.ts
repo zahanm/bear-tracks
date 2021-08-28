@@ -2,7 +2,11 @@ import { Database } from "sqlite";
 import * as moment from "moment";
 
 import { findDuplicateNotes } from "./findDuplicates";
-import { XCommand, bearXCallback, DEFAULT_OPTIONS } from "./bearXCallback";
+import {
+  XCommand,
+  bearXCallback,
+  DEFAULT_CREATE_OPTIONS,
+} from "./bearXCallback";
 import { retitleNote } from "./utils";
 
 export async function deduplicateNotes(
@@ -19,7 +23,7 @@ export async function deduplicateNotes(
       id: note.uuid,
       mode: "replace_all",
       text: newNote.text,
-      ...DEFAULT_OPTIONS,
+      ...DEFAULT_CREATE_OPTIONS,
     });
     console.error(newTitle);
   }

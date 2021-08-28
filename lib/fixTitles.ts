@@ -1,7 +1,11 @@
 import { Database } from "sqlite";
-import { getNote, getAllNotes } from "./getAllNotes";
+import { getAllNotes } from "./getAllNotes";
 import { retitleNote } from "./utils";
-import { bearXCallback, XCommand, DEFAULT_OPTIONS } from "./bearXCallback";
+import {
+  bearXCallback,
+  XCommand,
+  DEFAULT_CREATE_OPTIONS,
+} from "./bearXCallback";
 import { isValidFilename } from "./invalids";
 
 export async function fixInvalidNoteTitles(
@@ -20,7 +24,7 @@ export async function fixInvalidNoteTitles(
       id: note.uuid,
       mode: "replace_all",
       text: newNote.text,
-      ...DEFAULT_OPTIONS,
+      ...DEFAULT_CREATE_OPTIONS,
     });
     console.error(`Fixed: ${newNote.title}`);
   }

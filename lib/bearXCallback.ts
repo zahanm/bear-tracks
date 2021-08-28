@@ -9,7 +9,7 @@ export interface CREATE_NOTE_OPTIONS extends ParsedUrlQueryInput {
   text: string;
 }
 
-export const DEFAULT_OPTIONS = {
+export const DEFAULT_CREATE_OPTIONS = {
   show_window: "no",
   open_note: "no",
 };
@@ -24,6 +24,14 @@ export async function bearApiCreateNote(
   options: CREATE_NOTE_OPTIONS
 ) {
   await bearXCallback(opts, XCommand.CREATE, options);
+}
+
+export async function bearApiEditNote(
+  opts: Record<string, any>,
+  options: CREATE_NOTE_OPTIONS
+) {
+  // TODO implement this
+  await bearXCallback(opts, XCommand.EDIT, options);
 }
 
 /**
