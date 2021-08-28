@@ -7,6 +7,7 @@ import { open } from "sqlite";
 import { program } from "commander";
 import * as columnify from "columnify";
 import * as YAML from "yaml";
+import * as moment from "moment";
 
 import { BEAR_DB, AgentType, CONF } from "./lib/constants";
 import { findDuplicateNoteCounts } from "./lib/findDuplicates";
@@ -110,14 +111,19 @@ async function main() {
     program
       .command("create <note-type>")
       .description("Create a note of the type specified")
-      .action(async function (ntype: CreateNoteType) {
+      .option(
+        "--at <date>",
+        "set the current time to use with note creation. Useful for testing. In YYYY-MM-DD format."
+      )
+      .action(async function (ntype: CreateNoteType, command: any) {
+        const at = moment(command.opts().at);
         let note;
         switch (ntype) {
           case "daily":
-            note = await createDailyNote(program.opts());
+            note = await createDailyNote(program.opts(), at);
             break;
           case "weekly":
-            note = await createWeeklyNote(program.opts());
+            note = await createWeeklyNote(program.opts(), at);
             break;
           default:
             throw new Error(`Invalid note-type: ${ntype}`);
@@ -195,7 +201,7 @@ async function main() {
         "abort the export if there are notes with invalid titles",
         false
       )
-      .action(async function (dest: string, command: Record<string, any>) {
+      .action(async function (dest: string, command: any) {
         try {
           const stat = await fs.stat(dest);
           if (!stat.isDirectory()) {

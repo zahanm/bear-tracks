@@ -7,9 +7,10 @@ export interface Note {
 }
 
 export async function createDailyNote(
-  opts: Record<string, any>
+  opts: Record<string, any>,
+  now: moment.Moment
 ): Promise<Note> {
-  const tomorrow = moment().add(1, "day");
+  const tomorrow = now.add(1, "day");
   let title: string;
   assert(tomorrow.day() != 0); // Don't run this for Sunday
   if (tomorrow.day() === 6) {
@@ -37,10 +38,11 @@ export async function createDailyNote(
 }
 
 export async function createWeeklyNote(
-  opts: Record<string, any>
+  opts: Record<string, any>,
+  now: moment.Moment
 ): Promise<Note> {
-  const start = moment().add(1, "week").startOf("week");
-  const end = moment().add(1, "week").endOf("week");
+  const start = now.add(1, "week").startOf("week");
+  const end = now.add(1, "week").endOf("week");
   const title = `Plan for ${start.format("MMM D")} - ${end.format(
     "MMM D, YYYY"
   )}`;
