@@ -4,7 +4,7 @@ import * as fs from "fs/promises";
 
 import * as sqlite3 from "sqlite3";
 import { open } from "sqlite";
-import { program } from "commander";
+import { Command, program } from "commander";
 import * as columnify from "columnify";
 import * as YAML from "yaml";
 import * as moment from "moment";
@@ -115,7 +115,7 @@ async function main() {
         "--at <date>",
         "set the current time to use with note creation. Useful for testing. In YYYY-MM-DD format."
       )
-      .action(async function (ntype: CreateNoteType, command: any) {
+      .action(async function (ntype: CreateNoteType, command: Command) {
         const at = moment(command.opts().at);
         let note;
         switch (ntype) {
@@ -201,7 +201,7 @@ async function main() {
         "abort the export if there are notes with invalid titles",
         false
       )
-      .action(async function (dest: string, command: any) {
+      .action(async function (dest: string, command: Command) {
         try {
           const stat = await fs.stat(dest);
           if (!stat.isDirectory()) {
