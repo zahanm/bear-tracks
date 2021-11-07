@@ -14,8 +14,8 @@ export async function createDailyNote(
   opts: Record<string, any>,
   now: moment.Moment
 ): Promise<Note> {
+  assert(now.day() != 6); // Don't run this on Saturday (ie, there is no daily note for Sunday)
   const tomorrow = now.clone().add(1, "day");
-  assert(tomorrow.day() != 0); // Don't run this on Saturday, for Sunday
   const title = dailyTitle(tomorrow);
   const body = `## Plan
 
@@ -66,8 +66,8 @@ export async function createWeeklyNote(
   opts: Record<string, any>,
   now: moment.Moment
 ): Promise<Note> {
-  const title = weeklyTitle(now.clone().add(1, "week"));
-  const previousTitle = weeklyTitle(now);
+  const title = weeklyTitle(now.clone().add(3, "days"));
+  const previousTitle = weeklyTitle(now.clone().subtract(3, "days"));
   const body = `## Work
 
 ## Me
