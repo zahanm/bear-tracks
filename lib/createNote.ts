@@ -68,7 +68,12 @@ export async function createWeeklyNote(
 ): Promise<Note> {
   const title = weeklyTitle(now.clone().add(3, "days"));
   const previousTitle = weeklyTitle(now.clone().subtract(3, "days"));
-  const body = `## Work
+  const body = `- Clear: scan post-its, voice memos → collect in Things [Inbox](things:///show?id=inbox), then clear it.
+- Current: Fill out this note with a plan.
+- Current: Go through [Anytime](things:///show?id=anytime) in Things. Focus on physical next action.
+- Creative: Look at #tickler in Bear, and [Someday](things:///show?id=someday) in Things.
+
+## Work
 
 ## Me
 
