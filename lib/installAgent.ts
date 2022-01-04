@@ -14,5 +14,11 @@ export async function installAgent(
   );
   const plist_source = path.join(__dirname, "../config", AGENT[ntype].filename);
   console.error(`ln -s ${plist_source} ${plist_destination}`);
-  await fs.symlink(plist_source, plist_destination);
+  if (!opts.write) {
+    console.error(
+      `>>> Need to specify --write in order to modify filesystem <<<`
+    );
+  } else {
+    await fs.symlink(plist_source, plist_destination);
+  }
 }

@@ -9,10 +9,14 @@ import * as columnify from "columnify";
 import * as YAML from "yaml";
 import * as moment from "moment";
 
-import { BEAR_DB, AgentType, CONF } from "./lib/constants";
+import { BEAR_DB, AgentType, CreateNoteType, CONF } from "./lib/constants";
 import { findDuplicateNoteCounts } from "./lib/findDuplicates";
 import { invalidFilenames, invalidLinks } from "./lib/invalids";
-import { createDailyNote, createWeeklyNote } from "./lib/createNote";
+import {
+  createDailyNote,
+  createWeeklyNote,
+  createMonthlyNote,
+} from "./lib/createNote";
 import { installAgent } from "./lib/installAgent";
 import { deduplicateNotes } from "./lib/deduplicateNotes";
 import missingTitles from "./lib/missingTitles";
@@ -104,7 +108,6 @@ async function main() {
         await fixInvalidNoteTitles(program.opts(), db);
       });
 
-    type CreateNoteType = "daily" | "weekly";
     /**
      * @returns the created note title
      */
@@ -125,6 +128,9 @@ async function main() {
           case "weekly":
             note = await createWeeklyNote(program.opts(), at);
             break;
+          case "monthly":
+            note = await createMonthlyNote(program.opts(), at);
+            break;
           default:
             throw new Error(`Invalid note-type: ${ntype}`);
         }
@@ -143,6 +149,7 @@ async function main() {
         switch (agentType) {
           case "daily":
           case "weekly":
+          case "monthly":
           case "sync":
             await installAgent(program.opts(), agentType);
             break;
@@ -210,7 +217,8 @@ async function main() {
           await sync({ ...program.opts(), ...command.opts() }, db, dest);
         } catch (err) {
           if (program.cron && conf != null) {
-            notifyAndStopSync(program.opts(), conf, err.message);
+            const { message } = err as Error;
+            notifyAndStopSync(program.opts(), conf, message);
           } else {
             throw err;
           }

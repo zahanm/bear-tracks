@@ -110,3 +110,38 @@ function weeklyTitle(at: moment.Moment): string {
   )}`;
   return title;
 }
+
+export async function createMonthlyNote(
+  opts: Record<string, any>,
+  now: moment.Moment
+): Promise<Note> {
+  const yesterday = now.clone().subtract(1, "day");
+  // This is expected to run on the first day of the month
+  assert(now.month() != yesterday.month());
+  const title = monthlyTitle(yesterday);
+  // Add link to this note to the bottom of the weekly note
+  const lastMonth = yesterday.clone().subtract(1, "month");
+  const lastMonthTitle = monthlyTitle(lastMonth);
+  const body = `
+Previous: [[${lastMonthTitle}]]
+
+#debrief/monthly`;
+  if (opts.debug) {
+    console.error(`Create: ${title}`);
+    console.error(body);
+  }
+  await bearApiCreateNote(opts, {
+    title,
+    text: body,
+    pin: "yes",
+    ...DEFAULT_OPTIONS,
+  });
+
+  return {
+    title,
+  };
+}
+
+function monthlyTitle(at: moment.Moment): string {
+  return `Monthly Review: ${at.format("MMMM YYYY")}`;
+}
