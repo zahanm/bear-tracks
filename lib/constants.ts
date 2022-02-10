@@ -63,10 +63,10 @@ export const SYNC = {
 };
 
 export const LOGS = {
-  folder: "/usr/local/var/log/",
+  folder: "var/log/",
   file: "edu.zahanm.bear-tracks.log",
   logrotate: {
-    conf: "/usr/local/etc/logrotate.d/edu.zahanm.bear-tracks.conf",
+    conf: "etc/logrotate.d/edu.zahanm.bear-tracks.conf",
     file: "logrotate.conf",
   },
 };
