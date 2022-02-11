@@ -21,7 +21,7 @@
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
-        <string>/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin</string>
+        <string>/usr/bin:/bin:/usr/sbin:/sbin:/Users/zahanm/homebrew/bin:/usr/local/bin</string>
         <key>TRACKS_CONF</key>
         <string>/Users/zahanm/source/bear-tracks/config/conf.yaml</string>
     </dict>
