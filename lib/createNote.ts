@@ -73,6 +73,8 @@ export async function createWeeklyNote(
 - Current: Go through [Anytime](things:///show?id=anytime) in Things. Focus on physical next action.
 - Creative: Look at #tickler in Bear, and [Someday](things:///show?id=someday) in Things.
 
+## Family
+
 ## Work
 
 ## Me
